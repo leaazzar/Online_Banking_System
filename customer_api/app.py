@@ -1,28 +1,35 @@
-# customer_api/app.py
+
 import os
 import datetime as dt
 import sys
 
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
-try:
-    from dotenv import load_dotenv
-    # load .env from this folder (customer_api/.env)
-    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
-except ImportError:
-    pass
-
-# allow imports from project root (so we can import common, auth_service)
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 
-from .routes import accounts_bp, transfers_bp, transactions_bp  # relative imports
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+except ImportError:
+    pass
+
+from customer_api.routes.accounts import bp as accounts_bp
+from customer_api.routes.transfers import bp as transfers_bp
+from customer_api.routes.transactions import bp as transactions_bp
 
 
 def create_app():
     app = Flask(__name__)
+
+    CORS(
+        app,
+        resources={r"/*": {"origins": ["http://localhost:8080", "http://127.0.0.1:8080"]}},
+        supports_credentials=True,
+    )
 
     jwt_secret = os.getenv("JWT_SECRET_KEY")
     if not jwt_secret:

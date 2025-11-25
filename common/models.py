@@ -2,6 +2,7 @@ from datetime import datetime
 import enum
 
 from sqlalchemy import (
+    Boolean,
     Column,
     Integer,
     String,
@@ -32,7 +33,6 @@ class TicketStatusEnum(str, enum.Enum):
     IN_PROGRESS = "in_progress"
     RESOLVED = "resolved"
 
-
 class User(Base):
     __tablename__ = "users"
 
@@ -43,9 +43,15 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     role = Column(String, nullable=False, default=RoleEnum.CUSTOMER.value)
 
-    # Relationships
+    must_change_password = Column(Boolean, nullable=False, default=False)
+    failed_login_attempts = Column(Integer, nullable=False, default=0)
+    is_locked = Column(Boolean, nullable=False, default=False)
+    last_login_at = Column(DateTime, nullable=True)
+
     accounts = relationship("Account", back_populates="owner")
     tickets = relationship("Ticket", back_populates="customer")
+    audit_logs = relationship("AuditLog", back_populates="user")
+    reset_tokens = relationship("PasswordResetToken", back_populates="user")
 
 
 class Account(Base):
@@ -53,14 +59,13 @@ class Account(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     account_number = Column(String, unique=True, nullable=False, index=True)
-    type = Column(String, nullable=False)  # "checking" or "savings"
+    type = Column(String, nullable=False)
     balance = Column(Float, default=0.0)
     status = Column(String, default=AccountStatusEnum.ACTIVE.value)
 
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     owner = relationship("User", back_populates="accounts")
 
-    # Relationships to transactions
     outgoing_transactions = relationship(
         "Transaction",
         foreign_keys="Transaction.sender_account_id",
@@ -116,12 +121,24 @@ class Ticket(Base):
 
     customer = relationship("User", back_populates="tickets")
 
-
 class AuditLog(Base):
     __tablename__ = "audit_logs"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    action = Column(String, nullable=False)   # e.g. "login_failed", "freeze_account"
+    action = Column(String, nullable=False)
     details = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="audit_logs")
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    token = Column(String, unique=True, index=True, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    used = Column(Boolean, nullable=False, default=False)
+
+    user = relationship("User", back_populates="reset_tokens")

@@ -7,6 +7,7 @@ sys.path.append(PROJECT_ROOT)
 
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 from auth_service.routes import auth_bp
 
 try:
@@ -18,6 +19,17 @@ except ImportError:
 
 def create_app():
     app = Flask(__name__)
+
+    CORS(
+        app,
+        resources={r"/auth/*": {"origins": [
+            "http://localhost:8080",
+            "http://127.0.0.1:8080",
+            "http://localhost:8000",
+            "http://127.0.0.1:8000",
+        ]}},
+        supports_credentials=True,
+    )
 
     jwt_secret = os.getenv("JWT_SECRET_KEY")
     if not jwt_secret:
