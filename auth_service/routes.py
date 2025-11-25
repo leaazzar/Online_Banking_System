@@ -27,9 +27,6 @@ def get_db():
         db.close()
 
 
-# -----------------------------
-# Helpers: normalization / validation
-# -----------------------------
 def normalize_email(email: str | None) -> str | None:
     if not isinstance(email, str):
         return None
@@ -38,12 +35,10 @@ def normalize_email(email: str | None) -> str | None:
 
 
 def is_valid_email(email: str) -> bool:
-    # Simple, safe email check (not perfect, but enough for inputs)
     return bool(re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email))
 
 
 def is_valid_phone(phone: str) -> bool:
-    # Digits, spaces, +, -, ()
     if not isinstance(phone, str):
         return False
     phone = phone.strip()
@@ -61,9 +56,6 @@ def is_valid_full_name(full_name: str) -> bool:
     return True
 
 
-# -----------------------------
-# Register
-# -----------------------------
 @auth_bp.route("/register", methods=["POST"])
 def register():
     if not request.is_json:
@@ -123,10 +115,6 @@ def register():
     finally:
         db.close()
 
-
-# -----------------------------
-# Login
-# -----------------------------
 @auth_bp.route("/login", methods=["POST"])
 def login():
     if not request.is_json:
@@ -140,7 +128,6 @@ def login():
         return jsonify({"error": "Email and password are required"}), 400
 
     if not is_valid_email(email):
-        # Avoid too specific error: just say invalid credentials
         return jsonify({"error": "Invalid credentials"}), 401
 
     db = SessionLocal()
@@ -219,10 +206,6 @@ def refresh():
     )
     return jsonify({"access_token": new_access, "token_type": "Bearer"}), 200
 
-
-# -----------------------------
-# Change role (admin only)
-# -----------------------------
 @auth_bp.route("/users/<int:user_id>/role", methods=["PATCH"])
 @jwt_required()
 @require_roles("admin")
@@ -315,9 +298,6 @@ def first_login_setup():
         db.close()
 
 
-# -----------------------------
-# Password reset: request
-# -----------------------------
 @auth_bp.route("/password-reset/request", methods=["POST"])
 def request_password_reset():
     if not request.is_json:
@@ -329,12 +309,10 @@ def request_password_reset():
     if not email:
         return jsonify({"error": "Email is required"}), 400
 
-    # Note: we *don't* reject invalid format loudly: we keep message generic
     db = SessionLocal()
     try:
         user = db.query(User).filter(User.email == email).first()
 
-        # Always return the same message to avoid leaking which users exist
         if not user:
             return jsonify(
                 {
@@ -353,15 +331,12 @@ def request_password_reset():
         db.add(reset)
         db.commit()
 
-        # TODO: send email with URL like:
-        # https://your-frontend/reset-password?token=<token>
-        # For project, you can just print it to console or return it in JSON (for demo).
 
         return (
             jsonify(
                 {
                     "message": "If that email exists, a reset link has been sent.",
-                    "debug_token": token,  # remove in real deployment
+                    "debug_token": token,
                 }
             ),
             200,
@@ -370,9 +345,6 @@ def request_password_reset():
         db.close()
 
 
-# -----------------------------
-# Password reset: confirm
-# -----------------------------
 @auth_bp.route("/password-reset/confirm", methods=["POST"])
 def confirm_password_reset():
     if not request.is_json:
