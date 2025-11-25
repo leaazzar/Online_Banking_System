@@ -5,6 +5,13 @@ import datetime as dt
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(PROJECT_ROOT)
 
+import os
+import sys
+import datetime as dt
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(PROJECT_ROOT)
+
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
