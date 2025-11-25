@@ -1,0 +1,109 @@
+/* Frontend/css/styles.css */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", sans-serif;
+  background: #f5f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  background: white;
+  width: 360px;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+h2 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.input-group {
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  transition: 0.2s;
+}
+
+input:focus {
+  border-color: #3a7afe;
+  box-shadow: 0 0 0 2px rgba(58, 122, 254, 0.2);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #3a7afe;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  background: #2864e6;
+}
+
+.error {
+  color: #d62828;
+  margin-top: 12px;
+  font-size: 14px;
+  min-height: 20px;
+}
+
+.links {
+  margin-top: 18px;
+  font-size: 14px;
+}
+
+.links a {
+  color: #3a7afe;
+  text-decoration: none;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+.links span {
+  margin: 0 8px;
+  color: #999;
+}
+
+.success {
+  color: #2e7d32;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
