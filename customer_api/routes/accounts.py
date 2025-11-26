@@ -1,4 +1,5 @@
 import random
+
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt_identity
 
