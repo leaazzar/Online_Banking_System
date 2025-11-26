@@ -87,9 +87,9 @@ def update_ticket_status(ticket_id):
         ticket.status = new_status
         db.add(ticket)
 
-        # log
+        admin_id = int(get_jwt_identity())
         log = AuditLog(
-            user_id=get_jwt_identity(),
+            user_id=admin_id,
             action="ticket_status_update",
             details=f"Changed ticket {ticket_id} to {new_status}",
         )
@@ -118,16 +118,16 @@ def add_note(ticket_id):
         if not ticket:
             return jsonify({"error": "Ticket not found"}), 404
 
+        admin_id = int(get_jwt_identity())
         new_note = TicketNote(
             ticket_id=ticket_id,
-            user_id=get_jwt_identity(),
+            user_id=admin_id,
             note=note
         )
         db.add(new_note)
 
-        # log
         log = AuditLog(
-            user_id=get_jwt_identity(),
+            user_id=admin_id,
             action="ticket_note_added",
             details=f"Added note to ticket {ticket_id}"
         )

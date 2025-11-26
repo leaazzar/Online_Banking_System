@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from common.database import SessionLocal
 from common.models import Account, AccountStatusEnum, AuditLog, RoleEnum
@@ -14,7 +14,6 @@ def get_account_or_404(db, account_id):
     return acc
 
 
-# PATCH freeze
 @accounts_bp.patch("/accounts/<int:account_id>/freeze")
 @jwt_required()
 @require_roles(RoleEnum.ADMIN.value)
@@ -31,9 +30,10 @@ def freeze_account(account_id):
         acc.status = AccountStatusEnum.FROZEN.value
         db.add(acc)
 
+        admin_id = int(get_jwt_identity())
         log = AuditLog(
             action="freeze_account",
-            user_id=None,
+            user_id=admin_id,
             details=f"Account {acc.id} frozen"
         )
         db.add(log)
@@ -44,7 +44,6 @@ def freeze_account(account_id):
         db.close()
 
 
-# PATCH unfreeze
 @accounts_bp.patch("/accounts/<int:account_id>/unfreeze")
 @jwt_required()
 @require_roles(RoleEnum.ADMIN.value)
@@ -61,9 +60,10 @@ def unfreeze_account(account_id):
         acc.status = AccountStatusEnum.ACTIVE.value
         db.add(acc)
 
+        admin_id = int(get_jwt_identity())
         log = AuditLog(
             action="unfreeze_account",
-            user_id=None,
+            user_id=admin_id,
             details=f"Account {acc.id} unfrozen"
         )
         db.add(log)
@@ -74,7 +74,6 @@ def unfreeze_account(account_id):
         db.close()
 
 
-# PATCH close
 @accounts_bp.patch("/accounts/<int:account_id>/close")
 @jwt_required()
 @require_roles(RoleEnum.ADMIN.value)
@@ -91,9 +90,10 @@ def close_account(account_id):
         acc.status = AccountStatusEnum.CLOSED.value
         db.add(acc)
 
+        admin_id = int(get_jwt_identity())
         log = AuditLog(
             action="close_account",
-            user_id=None,
+            user_id=admin_id,
             details=f"Account {acc.id} closed"
         )
         db.add(log)
