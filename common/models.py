@@ -115,6 +115,19 @@ class Ticket(Base):
     )
 
     customer = relationship("User", back_populates="tickets")
+    notes = relationship("TicketNote", back_populates="ticket", cascade="all, delete-orphan")
+
+class TicketNote(Base):
+    __tablename__ = "ticket_notes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    ticket_id = Column(Integer, ForeignKey("tickets.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    note = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    ticket = relationship("Ticket", back_populates="notes")
+
 
 
 class AuditLog(Base):
