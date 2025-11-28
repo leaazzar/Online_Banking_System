@@ -13,6 +13,7 @@ from staff_api.routes.admin import admin_bp
 from staff_api.routes.auditor import auditor_bp
 from staff_api.routes.accounts import accounts_bp
 from staff_api.routes.logs import logs_bp
+from staff_api.admin_users import admin_users_bp
 
 try:
     from dotenv import load_dotenv
@@ -32,10 +33,10 @@ def create_app():
     app.config["JWT_SECRET_KEY"] = jwt_secret
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = dt.timedelta(minutes=15)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = dt.timedelta(days=7)
-
     app.config["JWT_TOKEN_LOCATION"] = ["headers"]
     app.config["JWT_HEADER_NAME"] = "Authorization"
     app.config["JWT_HEADER_TYPE"] = "Bearer"
+    app.register_blueprint(admin_users_bp)
 
     jwt = JWTManager(app)
 

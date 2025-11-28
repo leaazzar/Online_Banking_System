@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Accounts • YourBank</title>
+
+  <!-- Global UI Styles -->
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/modal.css" />
+
+  <script src="js/api.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/sidebar.js"></script>
+</head>
+
+<body>
+
+  <!-- PAGE WRAPPER -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar-container"></aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- NAVBAR -->
+      <header id="navbar-container"></header>
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <h1>Your Accounts</h1>
+        <p class="subtitle">View your balance, account types, and manage your money.</p>
+        <button class="primary-btn" onclick="openAccountForm()">+ Open New Account</button>
+      </div>
+
+      <!-- ACCOUNTS -->
+      <div id="accounts-container" class="card-grid"></div>
+
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Open a New Account</h2>
+
+      <label>Account Type</label>
+      <select id="new-account-type">
+        <option value="checking">Checking</option>
+        <option value="savings">Savings</option>
+      </select>
+
+      <label>Opening Balance</label>
+      <input id="new-account-balance" type="number" min="0" value="0"/>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" onclick="closeModal()">Cancel</button>
+        <button class="primary-btn" onclick="createAccount()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE LOGIC -->
+  <script>
+    document.addEventListener("DOMContentLoaded", loadAccounts);
+
+    async function loadAccounts() {
+      const container = document.getElementById("accounts-container");
+      container.innerHTML = "<p class='loading'>Loading accounts...</p>";
+
+      try {
+        const data = await apiGet("/customer/accounts");
+        container.innerHTML = "";
+
+        if (!data.accounts.length) {
+          container.innerHTML = "<p class='empty-msg'>You have no accounts yet.</p>";
+          return;
+        }
+
+        data.accounts.forEach(acc => {
+          const card = document.createElement("div");
+          card.className = "account-card card";
+
+          card.innerHTML = `
+            <h3>${acc.type.toUpperCase()}</h3>
+            <p class="balance">$${acc.balance.toFixed(2)}</p>
+            <p class="status">Status: <strong>${acc.status}</strong></p>
+            <button class="secondary-btn" onclick="viewDetails(${acc.id})">View Details</button>
+          `;
+
+          container.appendChild(card);
+        });
+      } catch (err) {
+        container.innerHTML = "<p class='error-msg'>Error loading accounts.</p>";
+      }
+    }
+
+    function viewDetails(id) {
+      window.location.href = "account_details.html?id=" + id;
+    }
+
+    function openAccountForm() {
+      document.getElementById("modal").classList.remove("hidden");
+    }
+
+    function closeModal() {
+      document.getElementById("modal").classList.add("hidden");
+    }
+
+    async function createAccount() {
+      const type = document.getElementById("new-account-type").value;
+      const balance = parseFloat(document.getElementById("new-account-balance").value);
+
+      await apiPost("/customer/accounts", {
+        type,
+        opening_balance: balance
+      });
+
+      closeModal();
+      loadAccounts();
+    }
+  </script>
+
+</body>
+</html>
+

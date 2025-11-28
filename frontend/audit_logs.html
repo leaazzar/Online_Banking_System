@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Audit Logs</title>
+
+    <link rel="stylesheet" href="/css/global.css">
+    <script src="js/api.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/sidebar.js"></script>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+
+    <!-- MAIN -->
+    <div class="main-content">
+
+        <!-- NAV -->
+        <div id="navbar-container"></div>
+
+        <h1>Audit Logs</h1>
+        <p class="page-subtitle">View all security-related system activity.</p>
+
+        <div class="card">
+            <table class="modern-table full-width">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>Details</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody id="logs-table"></tbody>
+</table>
+
+        </div>
+
+    </div>
+</div>
+
+<script src="js/audit_logs.js"></script>
+
+</body>
+</html>

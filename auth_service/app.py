@@ -1,27 +1,20 @@
+# ---- FORCE LOAD .env ----
 import os
+from dotenv import load_dotenv
+
+BASEDIR = os.path.dirname(os.path.abspath(__file__))
+ENV_PATH = os.path.join(BASEDIR, ".env")
+load_dotenv(ENV_PATH)
+# -------------------------
+
 import sys
 import datetime as dt
-
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(PROJECT_ROOT)
-
-import os
-import sys
-import datetime as dt
-
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.append(PROJECT_ROOT)
-
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from auth_service.routes import auth_bp
-
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass
 
 
 def create_app():
@@ -34,6 +27,8 @@ def create_app():
             "http://127.0.0.1:8080",
             "http://localhost:8000",
             "http://127.0.0.1:8000",
+            "http://localhost:5500",
+
         ]}},
         supports_credentials=True,
     )

@@ -66,7 +66,7 @@ def register():
     email = normalize_email(data.get("email"))
     phone = data.get("phone")
     password = data.get("password")
-
+    print("DEBUG PASSWORD RECEIVED (register):", repr(password))  #
     if not all([full_name, email, phone, password]):
         return jsonify({"error": "Missing required fields"}), 400
 

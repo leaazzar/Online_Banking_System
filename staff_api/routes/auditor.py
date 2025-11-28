@@ -49,3 +49,24 @@ def auditor_transactions():
         ])
     finally:
         db.close()
+@auditor_bp.get("/auditor/audit-logs")
+@jwt_required()
+@require_roles(RoleEnum.ADMIN.value, RoleEnum.AUDITOR.value)
+def get_audit_logs():
+    db = SessionLocal()
+    try:
+        logs = db.query(AuditLog).order_by(AuditLog.created_at.desc()).all()
+
+        return jsonify([
+            {
+                "id": log.id,
+                "action": log.action,
+                "details": log.details,
+                "user_id": log.user_id,
+                "user_name": log.user.full_name if log.user else None,
+                "created_at": log.created_at.isoformat(),
+            }
+            for log in logs
+        ]), 200
+    finally:
+        db.close()

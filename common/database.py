@@ -5,6 +5,8 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "..", "database.db") 
 DATABASE_URL = f"sqlite:///{os.path.abspath(DB_PATH)}"
+print("USING DATABASE:", DATABASE_URL)
+
 
 engine = create_engine(
     DATABASE_URL,

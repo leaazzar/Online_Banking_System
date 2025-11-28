@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Manage Users</title>
+
+    <link rel="stylesheet" href="/css/global.css" />
+    <link rel="stylesheet" href="/css/modal.css" />
+
+    <script src="js/api.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/navbar.js"></script>
+
+    <style>
+        .table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .table td {
+            padding: 12px;
+            border-top: 1px solid #eee;
+        }
+
+        .action-btn {
+            background: #4a6cf7;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            margin-right: 5px;
+        }
+
+        .danger-btn {
+            background: #e74c3c;
+        }
+
+        .small-btn {
+            font-size: 13px;
+            padding: 4px 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div id="navbar-container"></div>
+
+        <div class="page-header">
+            <h1>Manage Users</h1>
+        </div>
+
+        <button onclick="openCreateModal()" class="primary-btn" style="margin-bottom: 15px;">
+            + Create Staff User
+        </button>
+
+        <!-- USERS TABLE -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="users-body">
+                <!-- Loaded via JS -->
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- CREATE USER MODAL -->
+<div id="create-modal" class="modal hidden">
+    <div class="modal-content">
+        <h2>Create Staff User</h2>
+
+        <label>Full Name</label>
+        <input id="create-name">
+
+        <label>Email</label>
+        <input id="create-email">
+
+        <label>Phone</label>
+        <input id="create-phone">
+
+        <label>Password</label>
+        <input id="create-password" type="password">
+
+        <label>Role</label>
+        <select id="create-role">
+            <option value="support">Support</option>
+            <option value="auditor">Auditor</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        <div class="modal-actions">
+            <button class="secondary-btn" onclick="closeCreateModal()">Cancel</button>
+            <button class="primary-btn" onclick="createStaff()">Create</button>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT USER MODAL -->
+<div id="edit-modal" class="modal hidden">
+    <div class="modal-content">
+        <h2>Edit User</h2>
+
+        <label>Full Name</label>
+        <input id="edit-name">
+
+        <label>Email</label>
+        <input id="edit-email">
+
+        <label>Phone</label>
+        <input id="edit-phone">
+
+        <div class="modal-actions">
+            <button class="secondary-btn" onclick="closeEditModal()">Cancel</button>
+            <button class="primary-btn" onclick="saveUserEdit()">Save</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/manage_users.js"></script>
+
+</body>
+</html>

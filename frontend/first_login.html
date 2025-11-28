@@ -1,61 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>First Login – Admin Setup</title>
-  <link rel="stylesheet" href="css/styles.css">
+    <title>First Login Setup</title>
+    <link rel="stylesheet" href="/css/global.css" />
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
 </head>
+
 <body>
+<div class="centered-container">
+    <div class="card">
+        <h1>Update Credentials</h1>
 
-  <div class="card">
-    <h2>Admin First Login</h2>
-    <p class="subtitle">
-      Update your email and password before using the system.
-    </p>
+        <form id="first-login-form">
+            <input id="new-email" type="email" placeholder="New Email" required />
+            <input id="new-password" type="password" placeholder="New Password" required />
+            <input id="confirm-password" type="password" placeholder="Confirm Password" required />
 
-    <form id="first-login-form">
-      <div class="input-group">
-        <label>New Email</label>
-        <input
-          type="email"
-          id="fl-email"
-          placeholder="admin@example.com"
-          required
-        >
-      </div>
+            <button type="submit">Save</button>
+        </form>
 
-      <div class="input-group">
-        <label>New Password</label>
-        <input
-          type="password"
-          id="fl-password"
-          placeholder="Strong password"
-          required
-        >
-      </div>
-
-      <div class="input-group">
-        <label>Confirm Password</label>
-        <input
-          type="password"
-          id="fl-confirm-password"
-          placeholder="Re-enter password"
-          required
-        >
-      </div>
-
-      <button class="btn-primary" type="submit">Save and continue</button>
-    </form>
-
-    <p id="fl-error" class="error"></p>
-    <p id="fl-success" class="success"></p>
-
-    <div class="links">
-      <a href="index.html">Back to login</a>
+        <p id="first-login-error" style="color:#ff4d4d; text-align:center;"></p>
     </div>
-  </div>
-
-  <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
+</div>
 </body>
 </html>

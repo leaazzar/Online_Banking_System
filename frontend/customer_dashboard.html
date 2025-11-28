@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="css/global.css">
+  <script src="js/api.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/auth.js"></script>
+</head>
+
+<body class="dashboard-body">
+
+    <!-- TOP NAVBAR -->
+    <header class="top-nav">
+        <div class="logo">YourBank</div>
+        <div class="user-controls">
+            <span id="user-name">Loading...</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- SIDE MENU -->
+    <aside class="side-menu">
+        <a href="customer_dashboard.html" class="menu-item active">📊 Dashboard</a>
+        <a href="accounts.html" class="menu-item">💳 Accounts</a>
+        <a href="transfer.html" class="menu-item">💸 Transfer Money</a>
+        <a href="transactions.html" class="menu-item">📜 Transactions</a>
+        <a href="tickets.html" class="menu-item">🎟 Support Tickets</a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <h1>Welcome Back</h1>
+        <p class="sub-text">Here’s an overview of your accounts</p>
+
+        <div class="cards">
+            <div class="card">
+                <h2>Total Balance</h2>
+                <p class="big-number">$0.00</p>
+            </div>
+
+            <div class="card">
+                <h2>Active Accounts</h2>
+                <p class="big-number">0</p>
+            </div>
+
+            <div class="card">
+                <h2>Recent Transactions</h2>
+                <p class="big-number">0</p>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

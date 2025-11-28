@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Support Tickets</title>
+
+    <link rel="stylesheet" href="/css/global.css">
+    <script src="js/api.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/sidebar.js"></script>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+
+    <!-- MAIN -->
+    <div class="main-content">
+        
+        <!-- NAV -->
+        <div id="navbar-container"></div>
+
+        <h1>Support Tickets</h1>
+        <p class="page-subtitle">View and manage all customer support tickets.</p>
+
+        <div class="card">
+            <table class="modern-table full-width">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tickets-table"></tbody>
+            </table>
+        </div>
+
+        <!-- VIEW / UPDATE TICKET MODAL -->
+        <div id="ticket-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modal-subject"></h2>
+                <p id="modal-description"></p>
+
+                <h3>Notes</h3>
+                <div id="notes-list" class="notes-box"></div>
+
+                <h3>Add Note</h3>
+                <textarea id="new-note" class="input"></textarea>
+                <button class="btn-primary" onclick="addNote()">Add Note</button>
+
+                <h3>Change Status</h3>
+                <select id="ticket-status" class="input">
+                    <option value="open">Open</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+                <button class="btn-secondary" onclick="changeStatus()">Save</button>
+
+                <button class="btn-danger" onclick="closeTicketModal()">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="js/support_tickets.js"></script>
+
+</body>
+</html>

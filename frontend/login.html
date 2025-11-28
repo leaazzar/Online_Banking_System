@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <link rel="stylesheet" href="css/global.css">
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</head>
+
+<body class="auth-body">
+
+  <div class="auth-card">
+      <h2>Login</h2>
+
+      <form id="login-form">
+          <input id="login-email" type="email" placeholder="Email" required />
+          <input id="login-password" type="password" placeholder="Password" required />
+          <button class="primary-btn" type="submit">Login</button>
+      </form>
+
+      <p class="auth-bottom">
+          New here? <a href="register.html">Create an account</a>
+      </p>
+
+      <p id="login-error" class="error"></p>
+  </div>
+
+</body>
+</html>

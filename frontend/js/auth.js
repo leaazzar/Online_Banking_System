@@ -1,62 +1,51 @@
-// Frontend/js/auth.js
-
-// ---------- LOGIN ----------
+// =========================
+// LOGIN
+// =========================
 async function handleLogin(event) {
   event.preventDefault();
 
-  const email = document.getElementById("login-email").value.trim();
+  const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
-  const errorEl = document.getElementById("login-error");
+  const error = document.getElementById("login-error");
 
-  errorEl.textContent = "";
-
-  const { status, data } = await apiPost("/login", { email, password });
-
-  console.log("LOGIN RESPONSE:", status, data); // Debugging
+  const { status, data } = await authPost("/login", { email, password });
 
   if (status === 200) {
-    setAuthData({
-      access_token: data.access_token,
-      refresh_token: data.refresh_token,
-      user: data.user,
-    });
+    setAuthData(data);
 
-    // Redirect based on role
     if (data.user.role === "admin") {
       window.location.href = "admin_dashboard.html";
+    } else if (data.user.role === "support") {
+      window.location.href = "support_dashboard.html";
+    } else if (data.user.role === "auditor") {
+      window.location.href = "auditor_dashboard.html";
     } else {
-      alert(`Welcome ${data.user.full_name} (${data.user.role})`);
-      // Later: redirect customer to customer dashboard
-      // window.location.href = "customer_dashboard.html";
+      window.location.href = "customer_dashboard.html";
     }
-
   } else if (status === 403 && data.requires_password_change) {
     localStorage.setItem("first_login_token", data.first_login_token);
     localStorage.setItem("current_user", JSON.stringify(data.user));
     window.location.href = "first_login.html";
-
   } else {
-    errorEl.textContent = data.error || "Login failed.";
+    error.textContent = data.error || "Login failed.";
   }
 }
 
-
-// ---------- REGISTER ----------
+// =========================
+// REGISTER
+// =========================
 async function handleRegister(event) {
   event.preventDefault();
 
-  const full_name = document.getElementById("reg-full-name").value.trim();
-  const email = document.getElementById("reg-email").value.trim();
-  const phone = document.getElementById("reg-phone").value.trim();
+  const full_name = document.getElementById("reg-full-name").value;
+  const email = document.getElementById("reg-email").value;
+  const phone = document.getElementById("reg-phone").value;
   const password = document.getElementById("reg-password").value;
 
-  const errorEl = document.getElementById("register-error");
-  const successEl = document.getElementById("register-success");
+  const error = document.getElementById("register-error");
+  const success = document.getElementById("register-success");
 
-  errorEl.textContent = "";
-  successEl.textContent = "";
-
-  const { status, data } = await apiPost("/register", {
+  const { status, data } = await authPost("/register", {
     full_name,
     email,
     phone,
@@ -64,75 +53,47 @@ async function handleRegister(event) {
   });
 
   if (status === 201) {
-    successEl.textContent = "Account created successfully. You can now log in.";
-    // Optional: auto-redirect after a bit
-    // setTimeout(() => window.location.href = "index.html", 1500);
+    success.textContent = "Account created. You can now log in.";
   } else {
-    errorEl.textContent = data.error || "Registration failed.";
+    error.textContent = data.error || "Registration failed.";
   }
 }
 
-// ---------- FIRST LOGIN (ADMIN) ----------
+// =========================
+// FIRST LOGIN (ADMIN)
+// =========================
 async function handleFirstLogin(event) {
   event.preventDefault();
 
-  const newEmail = document.getElementById("fl-email").value.trim();
-  const newPassword = document.getElementById("fl-password").value;
-  const confirmPassword = document.getElementById("fl-confirm-password").value;
-
-  const errorEl = document.getElementById("fl-error");
-  const successEl = document.getElementById("fl-success");
-
-  errorEl.textContent = "";
-  successEl.textContent = "";
+  const email = document.getElementById("fl-email").value;
+  const password = document.getElementById("fl-password").value;
+  const confirm = document.getElementById("fl-confirm-password").value;
 
   const token = localStorage.getItem("first_login_token");
-  if (!token) {
-    errorEl.textContent = "Missing first login token. Please log in again.";
-    return;
-  }
 
-  const { status, data } = await apiPost(
+  const { status, data } = await authPost(
     "/first-login/setup",
-    {
-      email: newEmail,
-      password: newPassword,
-      confirm_password: confirmPassword,
-    },
+    { email, password, confirm_password: confirm },
     token
   );
 
   if (status === 200) {
-    successEl.textContent = data.message ||
-      "Credentials updated successfully. Please log in again.";
-
-    // Clean up and send them to login
-    localStorage.removeItem("first_login_token");
-    clearAuthData();
-
-    setTimeout(() => {
-      window.location.href = "index.html";
-    }, 1500);
+    clearAuth();
+    alert("Credentials updated. Please log in.");
+    window.location.href = "index.html";
   } else {
-    errorEl.textContent = data.error || "Failed to update admin credentials.";
+    document.getElementById("fl-error").textContent = data.error;
   }
 }
 
-// ---------- WIRE FORMS ----------
+// Attach listeners
 document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("login-form");
-  if (loginForm) {
-    loginForm.addEventListener("submit", handleLogin);
-  }
+  if (document.getElementById("login-form"))
+    document.getElementById("login-form").addEventListener("submit", handleLogin);
 
-  const regForm = document.getElementById("register-form");
-  if (regForm) {
-    regForm.addEventListener("submit", handleRegister);
-  }
+  if (document.getElementById("register-form"))
+    document.getElementById("register-form").addEventListener("submit", handleRegister);
 
-  const flForm = document.getElementById("first-login-form");
-  if (flForm) {
-    flForm.addEventListener("submit", handleFirstLogin);
-  }
+  if (document.getElementById("first-login-form"))
+    document.getElementById("first-login-form").addEventListener("submit", handleFirstLogin);
 });
-

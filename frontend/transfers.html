@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Transfer Money</title>
+
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+
+  <script src="js/api.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/sidebar.js"></script>
+
+  <style>
+    .transfer-container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .tab {
+      padding: 10px 16px;
+      background: var(--light);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .form-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-card label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+    }
+
+    .success-msg {
+      background: #d4f7d4;
+      padding: 10px;
+      color: green;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .error-msg {
+      background: #ffeded;
+      padding: 10px;
+      color: #b30000;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar-container"></div>
+
+  <div class="main-content">
+
+    <!-- NAVBAR -->
+    <div id="navbar-container"></div>
+
+    <div class="page-header">
+      <h1>Transfer Money</h1>
+      <p>Move money between your accounts or send to someone else.</p>
+    </div>
+
+    <div class="transfer-container">
+
+      <!-- Status Messages -->
+      <div id="status"></div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active" id="tab-internal" onclick="switchTab('internal')">Internal Transfer</div>
+        <div class="tab" id="tab-external" onclick="switchTab('external')">External Transfer</div>
+      </div>
+
+      <!-- INTERNAL TRANSFER -->
+      <div id="internal-transfer" class="form-card">
+
+        <label>From Account</label>
+        <select id="internal-from"></select>
+
+        <label>To Account</label>
+        <select id="internal-to"></select>
+
+        <label>Amount</label>
+        <input id="internal-amount" type="number" min="0" />
+
+        <label>Description (optional)</label>
+        <input id="internal-desc" type="text" />
+
+        <button class="primary-btn" style="margin-top: 20px;" onclick="submitInternal()">Submit Transfer</button>
+      </div>
+
+      <!-- EXTERNAL TRANSFER -->
+      <div id="external-transfer" class="form-card" style="display: none;">
+
+        <label>From Account</label>
+        <select id="external-from"></select>
+
+        <label>Recipient Account Number</label>
+        <input id="external-number" type="text" placeholder="10-digit number" />
+
+        <label>Amount</label>
+        <input id="external-amount" type="number" min="0" />
+
+        <label>Description (optional)</label>
+        <input id="external-desc" type="text" />
+
+        <button class="primary-btn" style="margin-top: 20px;" onclick="submitExternal()">Send Money</button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script src="js/transfers.js"></script>
+
+</body>
+</html>
