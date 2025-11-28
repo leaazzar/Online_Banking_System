@@ -14,12 +14,20 @@
       <h2>Create Account</h2>
 
       <form id="register-form">
-          <input id="full-name" type="text" placeholder="Full Name" required />
-          <input id="email" type="email" placeholder="Email" required />
-          <input id="phone" type="text" placeholder="Phone" required />
-          <input id="password" type="password" placeholder="Password" required />
-          <button class="primary-btn" type="submit">Register</button>
-      </form>
+      <input id="reg-full-name" type="text" placeholder="Full Name" required />
+      <input id="reg-email" type="email" placeholder="Email" required />
+      <input id="reg-phone" type="text" placeholder="Phone" required />
+      <input id="reg-password" type="password" placeholder="Password" required />
+      <button class="primary-btn" type="submit">Register</button>
+    </form>
+
+    <p class="auth-bottom">
+      Already have an account? <a href="login.html">Login</a>
+    </p>
+
+    <p id="register-error" class="error"></p>
+    <p id="register-success" class="success"></p>
+
 
       <p class="auth-bottom">
           Already have an account? <a href="login.html">Login</a>

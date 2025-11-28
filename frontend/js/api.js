@@ -1,6 +1,4 @@
-// =========================
-// GLOBAL API CONFIG
-// =========================
+
 
 // AUTH SERVICE
 const AUTH_BASE_URL = "http://localhost:5000/auth";
@@ -27,7 +25,9 @@ async function apiFetch(base, path, method, body = null, token = null) {
     headers: buildHeaders(token),
   };
 
-  if (body !== null) options.body = JSON.stringify(body);
+  if (body !== null) {
+    options.body = JSON.stringify(body);
+  }
 
   const response = await fetch(base + path, options);
   const data = await response.json().catch(() => ({}));
@@ -35,21 +35,30 @@ async function apiFetch(base, path, method, body = null, token = null) {
   return { status: response.status, data };
 }
 
-// AUTH
+// =========================
+// AUTH HELPERS
+// =========================
+
 const authPost = (path, body, token = null) =>
   apiFetch(AUTH_BASE_URL, path, "POST", body, token);
 
 const authPatch = (path, body, token = null) =>
   apiFetch(AUTH_BASE_URL, path, "PATCH", body, token);
 
-// CUSTOMER
+// =========================
+// CUSTOMER HELPERS (raw)
+// =========================
+
 const customerGet = (path, token = null) =>
   apiFetch(CUSTOMER_BASE_URL, path, "GET", null, token);
 
 const customerPost = (path, body, token = null) =>
   apiFetch(CUSTOMER_BASE_URL, path, "POST", body, token);
 
-// STAFF
+// =========================
+// STAFF HELPERS
+// =========================
+
 const staffGet = (path, token = null) =>
   apiFetch(STAFF_BASE_URL, path, "GET", null, token);
 
@@ -59,7 +68,10 @@ const staffPatch = (path, body, token = null) =>
 const staffPost = (path, body, token = null) =>
   apiFetch(STAFF_BASE_URL, path, "POST", body, token);
 
+// =========================
 // AUTH STORAGE
+// =========================
+
 function setAuthData({ access_token, refresh_token, user }) {
   if (access_token) localStorage.setItem("access_token", access_token);
   if (refresh_token) localStorage.setItem("refresh_token", refresh_token);
@@ -83,4 +95,33 @@ function clearAuth() {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
   localStorage.removeItem("current_user");
+  localStorage.removeItem("first_login_token");
+  localStorage.removeItem("user");
+}
+
+// =========================
+// CONVENIENCE HELPERS FOR CUSTOMER API
+// (used by accounts.html, etc.)
+// =========================
+
+async function apiGet(path) {
+  const token = getAccessToken();
+  const { status, data } = await customerGet(path, token);
+
+  if (status < 200 || status >= 300) {
+    throw new Error(`GET ${path} failed: ${status} ${JSON.stringify(data)}`);
+  }
+
+  return data;
+}
+
+async function apiPost(path, body) {
+  const token = getAccessToken();
+  const { status, data } = await customerPost(path, body, token);
+
+  if (status < 200 || status >= 300) {
+    throw new Error(`POST ${path} failed: ${status} ${JSON.stringify(data)}`);
+  }
+
+  return data;
 }

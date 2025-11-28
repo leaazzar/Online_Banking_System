@@ -2,19 +2,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const navContainer = document.getElementById("navbar-container");
   if (!navContainer) return;
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const token = getAccessToken && getAccessToken();
+  const user = (getCurrentUser && getCurrentUser()) || {};
+
+  const isLoggedIn = !!token;
 
   let buttons = "";
 
-  if (!user.role) {
+  if (!isLoggedIn) {
     // Not logged in
     buttons = `
-      <a href="index.html" class="nav-btn">Login</a>
+      <a href="login.html" class="nav-btn">Login</a>
       <a href="register.html" class="nav-btn-outline">Register</a>
     `;
   } else {
     // Logged in
+    const displayName = user.full_name || user.email || "Customer";
+
     buttons = `
+      <span style="margin-right: 8px;">${displayName}</span>
       <button class="logout-btn" onclick="logout()">Logout</button>
     `;
   }
@@ -31,7 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function logout() {
-  localStorage.clear();
+  if (typeof clearAuth === "function") {
+    clearAuth();
+  } else {
+    // Fallback, in case clearAuth isn't loaded for some reason
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("current_user");
+    localStorage.removeItem("user");
+    localStorage.removeItem("first_login_token");
+  }
+
   window.location.href = "index.html";
 }
 
@@ -41,7 +57,7 @@ function injectNavbarCSS() {
     .navbar {
       height: 60px;
       display: flex;
-      justify-content: flex-end;     /* EVERYTHING TO THE RIGHT */
+      justify-content: flex-end;
       align-items: center;
       background: #ffffff;
       border-bottom: 1px solid #e6e6e6;
@@ -54,7 +70,7 @@ function injectNavbarCSS() {
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 12px;                     /* space between buttons */
+      gap: 12px;
     }
 
     .nav-btn, .nav-btn-outline {

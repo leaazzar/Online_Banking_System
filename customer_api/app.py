@@ -7,6 +7,7 @@ sys.path.append(PROJECT_ROOT)
 
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS  # ✅ NEW
 
 from customer_api.routes.accounts import accounts_bp
 from customer_api.routes.transfers import transfers_bp
@@ -39,6 +40,15 @@ def create_app():
 
     jwt = JWTManager(app)
 
+    # ✅ CORS so frontend (localhost:8080) can call this service with Authorization header
+    CORS(
+        app,
+        resources={r"/*": {"origins": ["http://localhost:8080"]}},
+        supports_credentials=True,
+        allow_headers=["Content-Type", "Authorization"],
+        methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    )
+
     @jwt.unauthorized_loader
     def missing_token(reason):
         return jsonify({"msg": f"Missing or invalid token: {reason}"}), 401
@@ -51,6 +61,7 @@ def create_app():
     def revoked_token(jwt_header, jwt_payload):
         return jsonify({"msg": "Token has been revoked"}), 401
 
+    # Blueprints (note: each has its own url_prefix)
     app.register_blueprint(accounts_bp)
     app.register_blueprint(transfers_bp)
     app.register_blueprint(transactions_bp)
