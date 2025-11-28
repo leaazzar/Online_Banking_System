@@ -1,11 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Login</title>
   <link rel="stylesheet" href="css/global.css">
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
+
+  <style>
+    /* Clean login styling */
+    .auth-body {
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(135deg, #eef2ff, #dbe4ff);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-card {
+      background: white;
+      width: 380px;
+      padding: 40px 45px;
+      border-radius: 18px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+      text-align: center;
+    }
+
+    .auth-card h2 {
+      font-size: 26px;
+      color: #1a237e;
+      font-weight: 700;
+      margin-bottom: 25px;
+    }
+
+    #login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    #login-form input {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #c5cae9;
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    #login-form input:focus {
+      border-color: #3b5bff;
+      box-shadow: 0 0 0 3px rgba(59, 91, 255, 0.15);
+    }
+
+    .primary-btn {
+      background: #3b5bff;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: 0.25s;
+    }
+
+    .primary-btn:hover {
+      background: #2d47cc;
+    }
+
+    .auth-bottom {
+      margin-top: 18px;
+      font-size: 14px;
+      color: #5c6bc0;
+    }
+
+    .auth-bottom a {
+      color: #3b5bff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-bottom a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      margin-top: 10px;
+      color: #d32f2f;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  </style>
 </head>
 
 <body class="auth-body">

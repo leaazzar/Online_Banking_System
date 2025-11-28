@@ -11,6 +11,7 @@ async function handleLogin(event) {
   const { status, data } = await authPost("/login", { email, password });
 
   if (status === 200) {
+    // Normal login
     setAuthData(data);
 
     if (data.user.role === "admin") {
@@ -23,9 +24,10 @@ async function handleLogin(event) {
       window.location.href = "customer_dashboard.html";
     }
   } else if (status === 403 && data.requires_password_change) {
+    // First-login forced password change
     localStorage.setItem("first_login_token", data.first_login_token);
     localStorage.setItem("current_user", JSON.stringify(data.user));
-    window.location.href = "first_login.html";
+    window.location.href = "first_login.html";  // keep your current filename
   } else {
     error.textContent = data.error || "Login failed.";
   }
@@ -54,8 +56,10 @@ async function handleRegister(event) {
 
   if (status === 201) {
     success.textContent = "Account created. You can now log in.";
+    error.textContent = "";
   } else {
     error.textContent = data.error || "Registration failed.";
+    success.textContent = "";
   }
 }
 
@@ -65,11 +69,21 @@ async function handleRegister(event) {
 async function handleFirstLogin(event) {
   event.preventDefault();
 
-  const email = document.getElementById("fl-email").value;
-  const password = document.getElementById("fl-password").value;
-  const confirm = document.getElementById("fl-confirm-password").value;
+  // 🔹 Match your first-login HTML IDs
+  const email = document.getElementById("new-email").value;
+  const password = document.getElementById("new-password").value;
+  const confirm = document.getElementById("confirm-password").value;
+
+  const errorEl = document.getElementById("first-login-error");
 
   const token = localStorage.getItem("first_login_token");
+  if (!token) {
+    errorEl.textContent = "Session expired. Please log in again.";
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1500);
+    return;
+  }
 
   const { status, data } = await authPost(
     "/first-login/setup",
@@ -78,22 +92,34 @@ async function handleFirstLogin(event) {
   );
 
   if (status === 200) {
-    clearAuth();
-    alert("Credentials updated. Please log in.");
-    window.location.href = "index.html";
+    // Clean auth + temp token
+    clearAuth && clearAuth();
+    localStorage.removeItem("first_login_token");
+
+    // 🔹 Redirect to LOGIN PAGE after saving
+    alert("Credentials updated. Please log in with your new email and password.");
+    window.location.href = "login.html";
   } else {
-    document.getElementById("fl-error").textContent = data.error;
+    errorEl.textContent = data.error || "Could not update credentials.";
   }
 }
 
+// =========================
 // Attach listeners
+// =========================
 document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById("login-form"))
-    document.getElementById("login-form").addEventListener("submit", handleLogin);
+  const loginForm = document.getElementById("login-form");
+  if (loginForm) {
+    loginForm.addEventListener("submit", handleLogin);
+  }
 
-  if (document.getElementById("register-form"))
-    document.getElementById("register-form").addEventListener("submit", handleRegister);
+  const registerForm = document.getElementById("register-form");
+  if (registerForm) {
+    registerForm.addEventListener("submit", handleRegister);
+  }
 
-  if (document.getElementById("first-login-form"))
-    document.getElementById("first-login-form").addEventListener("submit", handleFirstLogin);
+  const firstLoginForm = document.getElementById("first-login-form");
+  if (firstLoginForm) {
+    firstLoginForm.addEventListener("submit", handleFirstLogin);
+  }
 });

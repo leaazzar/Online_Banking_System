@@ -1,14 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8" />
     <title>First Login Setup</title>
-    <link rel="stylesheet" href="/css/global.css" />
+
+    <link rel="stylesheet" href="css/global.css" />
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Inter", sans-serif;
+            background: linear-gradient(135deg, #eef2ff, #dbe4ff);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            width: 380px;
+            padding: 40px 45px;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+            text-align: center;
+        }
+
+        .card h1 {
+            font-size: 26px;
+            color: #1a237e;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        #first-login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        #first-login-form input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #c5cae9;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        #first-login-form input:focus {
+            border-color: #3b5bff;
+            box-shadow: 0 0 0 3px rgba(59, 91, 255, 0.15);
+        }
+
+        button {
+            background: #3b5bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.25s;
+        }
+
+        button:hover {
+            background: #2d47cc;
+        }
+
+        #first-login-error {
+            margin-top: 12px;
+            color: #d32f2f;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
 </head>
 
 <body>
-<div class="centered-container">
+
     <div class="card">
         <h1>Update Credentials</h1>
 
@@ -16,12 +90,11 @@
             <input id="new-email" type="email" placeholder="New Email" required />
             <input id="new-password" type="password" placeholder="New Password" required />
             <input id="confirm-password" type="password" placeholder="Confirm Password" required />
-
             <button type="submit">Save</button>
         </form>
 
-        <p id="first-login-error" style="color:#ff4d4d; text-align:center;"></p>
+        <p id="first-login-error"></p>
     </div>
-</div>
+
 </body>
 </html>

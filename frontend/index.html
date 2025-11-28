@@ -1,16 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Online Banking</title>
   <link rel="stylesheet" href="css/global.css">
+
+  <style>
+    /* Cleaner landing styling */
+
+    .landing-body {
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(135deg, #eef2ff, #dbe4ff);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .landing-container {
+      text-align: center;
+      background: white;
+      padding: 50px 60px;
+      border-radius: 18px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+      max-width: 480px;
+      width: 90%;
+    }
+
+    .landing-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a237e;
+      margin-bottom: 12px;
+    }
+
+    .landing-sub {
+      font-size: 18px;
+      color: #5c6bc0;
+      margin-bottom: 35px;
+    }
+
+    .landing-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.25s ease;
+    }
+
+    .primary-btn {
+      background: #3b5bff;
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: #2d47cc;
+    }
+
+    .secondary-btn {
+      border: 2px solid #3b5bff;
+      color: #3b5bff;
+      background: transparent;
+    }
+
+    .secondary-btn:hover {
+      background: #3b5bff;
+      color: white;
+    }
+  </style>
 </head>
 
 <body class="landing-body">
 
   <div class="landing-container">
       <h1 class="landing-title">Welcome to Your Digital Bank</h1>
-      <p class="landing-sub">Secure. Simple. Modern.</p>
+      <p class="landing-sub">Secure • Simple • Modern</p>
 
       <div class="landing-buttons">
           <a href="login.html" class="primary-btn">Login</a>

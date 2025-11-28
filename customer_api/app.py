@@ -40,7 +40,6 @@ def create_app():
 
     jwt = JWTManager(app)
 
-    # ✅ CORS so frontend (localhost:8080) can call this service with Authorization header
     CORS(
         app,
         resources={r"/*": {"origins": ["http://localhost:8080"]}},
@@ -61,7 +60,6 @@ def create_app():
     def revoked_token(jwt_header, jwt_payload):
         return jsonify({"msg": "Token has been revoked"}), 401
 
-    # Blueprints (note: each has its own url_prefix)
     app.register_blueprint(accounts_bp)
     app.register_blueprint(transfers_bp)
     app.register_blueprint(transactions_bp)
