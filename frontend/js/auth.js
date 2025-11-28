@@ -121,3 +121,19 @@ document.addEventListener("DOMContentLoaded", () => {
     firstLoginForm.addEventListener("submit", handleFirstLogin);
   }
 });
+// =========================
+// LOGOUT HELPER
+// =========================
+function handleLogout() {
+  console.log("handleLogout called"); // 🔍 debug
+
+  // Safety: if clearAuth is defined, call it
+  if (typeof clearAuth === "function") {
+    clearAuth();
+  } else {
+    console.warn("clearAuth is not defined!");
+  }
+
+  // go back to login page
+  window.location.href = "login.html";
+}
