@@ -27,6 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   navContainer.innerHTML = `
     <div class="navbar">
+    <div class="logo" onclick="goHome()" style="cursor:pointer; margin-right:auto;">BestBank</div>
+
       <div class="nav-right">
         ${buttons}
       </div>

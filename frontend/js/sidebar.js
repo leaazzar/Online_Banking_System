@@ -1,16 +1,31 @@
+// Helper: get user object from localStorage (supports both keys)
+function getStoredUser() {
+  try {
+    const raw =
+      localStorage.getItem("current_user") ||
+      localStorage.getItem("user");
+
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    console.error("Failed to parse stored user:", e);
+    return {};
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const sidebar = document.getElementById("sidebar-container");
   if (!sidebar) return;
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user = getStoredUser();
   const role = user.role || "";
 
   let menu = "";
 
   if (role === "customer") {
     menu = `
+      <a href="customer_dashboard.html" class="sidebar-link">Dashboard</a>
       <a href="accounts.html" class="sidebar-link">Accounts</a>
-      <a href="transfer.html" class="sidebar-link">Transfer Money</a>
+      <a href="transfers.html" class="sidebar-link">Transfer Money</a>
       <a href="transactions.html" class="sidebar-link">Transactions</a>
       <a href="tickets.html" class="sidebar-link">Support Tickets</a>
     `;
@@ -42,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   sidebar.innerHTML = `
     <aside class="sidebar">
-      <h2 class="sidebar-title">YourBank</h2>
+      <h2 class="sidebar-title" onclick="goHome()" style="cursor: pointer;">BestBank</h2>
       <nav class="sidebar-menu">${menu}</nav>
     </aside>
   `;
@@ -95,6 +110,22 @@ document.addEventListener("DOMContentLoaded", () => {
       margin-left: 230px !important;
     }
   `;
-  
   document.head.appendChild(style);
 });
+
+function goHome() {
+  const user = getStoredUser();
+  const role = user.role;
+
+  if (role === "customer") {
+    window.location.href = "customer_dashboard.html";
+  } else if (role === "support") {
+    window.location.href = "support_dashboard.html";
+  } else if (role === "auditor") {
+    window.location.href = "audit_dashboard.html";
+  } else if (role === "admin") {
+    window.location.href = "admin_dashboard.html";
+  } else {
+    window.location.href = "index.html"; 
+  }
+}
