@@ -28,10 +28,7 @@ from staff_api.routes.admin import admin_bp
 from staff_api.routes.auditor import auditor_bp
 from staff_api.routes.accounts import accounts_bp
 from staff_api.routes.logs import logs_bp
-<<<<<<< HEAD
-=======
 # from staff_api.routes.admin_users import admin_users_bp   # enable if used
->>>>>>> 1d0005f23c3d28032628a12c75421f51235ac022
 
 
 # ---------------------------------------------------
@@ -39,12 +36,8 @@ from staff_api.routes.logs import logs_bp
 # ---------------------------------------------------
 def create_app():
     app = Flask(__name__)
-<<<<<<< HEAD
-    CORS(app, supports_credentials=True)
-=======
 
     # Load secret from env
->>>>>>> 1d0005f23c3d28032628a12c75421f51235ac022
     jwt_secret = os.getenv("JWT_SECRET_KEY")
     print("Loaded JWT_SECRET_KEY:", jwt_secret)   # DEBUG
 
@@ -57,8 +50,6 @@ def create_app():
     app.config["JWT_TOKEN_LOCATION"] = ["headers"]
     app.config["JWT_HEADER_NAME"] = "Authorization"
     app.config["JWT_HEADER_TYPE"] = "Bearer"
-<<<<<<< HEAD
-=======
 
     # ---------------------------------------------------
     # CORS (Frontend → Backend communication)
@@ -72,7 +63,6 @@ def create_app():
     # ---------------------------------------------------
     # JWT ERROR HANDLERS
     # ---------------------------------------------------
->>>>>>> 1d0005f23c3d28032628a12c75421f51235ac022
     jwt = JWTManager(app)
 
     @jwt.unauthorized_loader
