@@ -12,7 +12,7 @@ transactions_bp = Blueprint("transactions", __name__, url_prefix="/transactions"
 
 
 @transactions_bp.route("", methods=["GET"])
-@require_roles("customer")
+@require_roles("customer", "admin")
 def list_transactions():
     """
     GET /transactions?date_from=&date_to=&type=&amount_min=&amount_max=

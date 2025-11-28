@@ -52,10 +52,14 @@ function setAuthData({ access_token, refresh_token, user }) {
   if (refresh_token) localStorage.setItem("refresh_token", refresh_token);
   if (user) localStorage.setItem("current_user", JSON.stringify(user));
 }
-
 function getAccessToken() {
-  return localStorage.getItem("access_token");
+  
+  return (
+    localStorage.getItem("access_token") ||
+    localStorage.getItem("staff_access_token")
+  );
 }
+
 
 function getRefreshToken() {
   return localStorage.getItem("refresh_token");

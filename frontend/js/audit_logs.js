@@ -10,7 +10,7 @@ async function loadAuditLogs() {
   try {
     console.log("Calling staffApiGet for /auditor/audit-logs");
 
-    // ✅ USE STAFF API, NOT apiGet
+    // ✅ STAFF API, not apiGet
     const logs = await staffApiGet("/auditor/audit-logs");
 
     console.log("Logs response:", logs);

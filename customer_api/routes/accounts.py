@@ -20,7 +20,7 @@ def _generate_account_number(session):
 
 
 @accounts_bp.route("/create", methods=["POST"])
-@require_roles("customer")
+@require_roles("customer", "admin")
 def create_account():
     """
     POST /accounts/create
@@ -72,7 +72,7 @@ def create_account():
 
 
 @accounts_bp.route("", methods=["GET"])
-@require_roles("customer")
+@require_roles("customer", "admin")
 def list_accounts():
     """
     GET /accounts
@@ -122,7 +122,7 @@ def list_accounts():
 
 
 @accounts_bp.route("/<int:account_id>", methods=["GET"])
-@require_roles("customer")
+@require_roles("customer", "admin")
 def get_account(account_id):
     """
     GET /accounts/<id>

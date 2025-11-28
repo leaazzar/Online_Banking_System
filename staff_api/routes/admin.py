@@ -290,3 +290,72 @@ def admin_get_user_accounts(user_id):
         return jsonify(result), 200
     finally:
          db.close()
+
+
+@admin_bp.post("/admin/accounts")
+@jwt_required()
+@require_roles(RoleEnum.ADMIN.value)
+def admin_create_account():
+    """
+    Admin can create an account for ANY customer.
+    Body:
+    {
+      "owner_id": int,
+      "type": "checking" | "savings",
+      "opening_balance": float (optional, default 0)
+    }
+    """
+    db = SessionLocal()
+    try:
+        data = request.get_json() or {}
+        owner_id = data.get("owner_id")
+        acc_type = (data.get("type") or "").strip().lower()
+        opening_balance = data.get("opening_balance", 0)
+
+        if not owner_id or acc_type not in ("checking", "savings"):
+            return jsonify({"msg": "owner_id and valid type are required"}), 400
+
+        try:
+            opening_balance = float(opening_balance)
+        except (TypeError, ValueError):
+            return jsonify({"msg": "opening_balance must be numeric"}), 400
+
+        if opening_balance < 0:
+            return jsonify({"msg": "opening_balance cannot be negative"}), 400
+
+        # Ensure owner exists and is a customer
+        owner = db.query(User).filter_by(id=owner_id, role="customer").first()
+        if not owner:
+            return jsonify({"msg": "Customer not found"}), 404
+
+        # Create account – account_number likely auto-generated in model
+        acc = Account(
+            owner_id=owner_id,
+            type=acc_type,
+            balance=opening_balance,
+            status=AccountStatusEnum.ACTIVE.value,
+        )
+        db.add(acc)
+
+        admin_id = get_jwt_identity()
+        log = AuditLog(
+            user_id=admin_id,
+            action="create_account",
+            details=f"Admin created {acc_type} account for user {owner_id} with opening balance {opening_balance}",
+        )
+        db.add(log)
+
+        db.commit()
+        db.refresh(acc)
+
+        return jsonify({
+            "id": acc.id,
+            "number": acc.account_number,
+            "type": acc.type,
+            "balance": float(acc.balance),
+            "status": acc.status,
+            "owner_id": acc.owner_id,
+        }), 201
+
+    finally:
+        db.close()

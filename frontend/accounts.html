@@ -27,11 +27,11 @@
 
       <!-- HEADER -->
       <div class="page-header">
-        <h1>Your Accounts</h1>
-        <p class="subtitle">
+        <h1 id="accounts-title">Your Accounts</h1>
+        <p class="subtitle" id="accounts-subtitle">
           View your balances, account types, and manage your money.
         </p>
-        <button class="primary-btn" onclick="openAccountModal()">
+        <button id="open-account-btn" class="primary-btn" onclick="openAccountModal()">
           + Open New Account
         </button>
       </div>
@@ -44,7 +44,18 @@
   <!-- CREATE ACCOUNT MODAL -->
   <div id="account-modal" class="modal hidden">
     <div class="modal-content">
-      <h2>Open a New Account</h2>
+      <h2 id="modal-title">Open a New Account</h2>
+
+      <!-- For admin: choose customer -->
+      <div id="admin-owner-field" style="display: none; margin-bottom: 10px;">
+        <label for="new-account-owner">Customer ID</label>
+        <input
+          id="new-account-owner"
+          type="number"
+          min="1"
+          placeholder="Enter customer ID"
+        />
+      </div>
 
       <label for="new-account-type">Account Type</label>
       <select id="new-account-type">
@@ -77,11 +88,33 @@
     // PAGE LOAD
     // --------------------------
     document.addEventListener("DOMContentLoaded", () => {
-      // if not logged in, send to login
       const token = getAccessToken();
       if (!token) {
         window.location.href = "login.html";
         return;
+      }
+
+      const user = getCurrentUser();
+
+      const titleEl = document.getElementById("accounts-title");
+      const subtitleEl = document.getElementById("accounts-subtitle");
+      const openBtn = document.getElementById("open-account-btn");
+      const adminOwnerField = document.getElementById("admin-owner-field");
+      const modalTitle = document.getElementById("modal-title");
+
+      if (user && (user.role === "admin" || user.role === "support")) {
+        // Admin/support view: all accounts
+        titleEl.textContent = "All Accounts";
+        subtitleEl.textContent = "View and manage all customer accounts.";
+
+        if (user.role === "admin") {
+          // Admin can create accounts for customers
+          adminOwnerField.style.display = "block";
+          modalTitle.textContent = "Open Account for Customer";
+        } else {
+          // Support cannot create accounts
+          openBtn.style.display = "none";
+        }
       }
 
       loadAccounts();
@@ -95,21 +128,20 @@
       container.innerHTML = "<p class='loading'>Loading accounts...</p>";
 
       try {
-        const token = getAccessToken();
-        const { status, data } = await customerGet("/accounts", token);
+        const user = getCurrentUser();
+        let accounts;
 
-        if (status !== 200) {
-          console.error("Failed to load accounts:", status, data);
-          container.innerHTML =
-            "<p class='error-msg'>Error loading accounts.</p>";
-          return;
+        if (user && (user.role === "admin" || user.role === "support")) {
+          // Staff API → all accounts
+          accounts = await staffApiGet("/admin/accounts");
+        } else {
+          // Customer API → only this user's accounts
+          accounts = await apiGet("/accounts");
         }
-
-        const accounts = data; // backend returns a plain list []
 
         if (!accounts || accounts.length === 0) {
           container.innerHTML =
-            "<p class='empty-msg'>You have no accounts yet.</p>";
+            "<p class='empty-msg'>No accounts found.</p>";
           return;
         }
 
@@ -120,13 +152,15 @@
           card.className = "account-card card";
 
           const balance = Number(acc.balance || 0).toFixed(2);
+          const number = acc.account_number || acc.number || acc.id;
+          const type = acc.type ? acc.type.toUpperCase() : "ACCOUNT";
 
           card.innerHTML = `
-            <h3>${acc.type ? acc.type.toUpperCase() : "ACCOUNT"}</h3>
+            <h3>${type}</h3>
             <p class="balance">$${balance}</p>
             <p class="status">
-              <span>Account #${acc.account_number}</span><br/>
-              Status: <strong>${acc.status}</strong>
+              <span>Account #${number}</span><br/>
+              Status: <strong>${acc.status || "UNKNOWN"}</strong>
             </p>
           `;
 
@@ -155,27 +189,42 @@
     // CREATE ACCOUNT
     // --------------------------
     async function createAccount() {
+      const user = getCurrentUser();
+
       const typeEl = document.getElementById("new-account-type");
       const balanceEl = document.getElementById("new-account-balance");
+      const ownerEl = document.getElementById("new-account-owner");
 
       const account_type = typeEl.value;
       const initial_deposit = parseFloat(balanceEl.value) || 0;
 
       try {
-        const token = getAccessToken();
-        const { status, data } = await customerPost(
-          "/accounts/create",
-          { account_type, initial_deposit },
-          token
-        );
+        if (user && user.role === "admin") {
+          // Admin creates account for any customer via staff API
+          const owner_id = parseInt(ownerEl.value);
 
-        if (status !== 201) {
-          console.error("Create account failed:", status, data);
-          alert(
-            "Error creating account.\n\n" +
-              (data.msg || data.error || `Status ${status}`)
-          );
+          if (!owner_id || isNaN(owner_id)) {
+            alert("Please enter a valid customer ID.");
+            return;
+          }
+
+          await staffApiPost("/admin/accounts", {
+            owner_id,
+            type: account_type,
+            opening_balance: initial_deposit,
+          });
+        } else if (user && user.role === "support") {
+          alert("Support staff cannot create accounts.");
           return;
+        } else {
+          // Normal customer creates account for themselves (customer API)
+          const result = await customerPost("/accounts/create", {
+            account_type,
+            initial_deposit,
+          });
+
+          // customerPost through authApiFetch already throws on non-2xx
+          console.log("Customer account created:", result);
         }
 
         // Success
@@ -183,7 +232,7 @@
         loadAccounts();
       } catch (err) {
         console.error("Error creating account:", err);
-        alert("Error creating account.\n\n" + err.message);
+        alert("Error creating account.\n\n" + (err.message || "Unknown error"));
       }
     }
   </script>

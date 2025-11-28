@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from common.database import SessionLocal
-from common.models import Account, Transaction, AccountStatusEnum
+from common.models import Account, Transaction, AccountStatusEnum, RoleEnum
 from customer_api.utils import require_roles
 
 transfers_bp = Blueprint("transfers", __name__, url_prefix="/transfers")
@@ -12,7 +12,8 @@ def _is_active(account: Account) -> bool:
 
 
 @transfers_bp.route("/internal", methods=["POST"])
-@require_roles("customer")
+@jwt_required()
+@require_roles(RoleEnum.CUSTOMER.value, RoleEnum.ADMIN.value)
 def internal_transfer():
     """
     POST /transfers/internal
@@ -47,7 +48,6 @@ def internal_transfer():
 
         user_id = get_jwt_identity()
 
-        # Ensure both accounts belong to this customer
         from_acc = session.query(Account).filter_by(id=from_id, owner_id=user_id).first()
         to_acc = session.query(Account).filter_by(id=to_id, owner_id=user_id).first()
 
@@ -60,11 +60,9 @@ def internal_transfer():
         if from_acc.balance < amount:
             return jsonify({"msg": "Insufficient balance"}), 400
 
-        # Update balances
         from_acc.balance -= amount
         to_acc.balance += amount
 
-        # Two transaction rows: debit sender, credit receiver
         debit_txn = Transaction(
             sender_account_id=from_acc.id,
             receiver_account_id=to_acc.id,
@@ -95,7 +93,8 @@ def internal_transfer():
 
 
 @transfers_bp.route("/external", methods=["POST"])
-@require_roles("customer")
+@jwt_required()
+@require_roles(RoleEnum.CUSTOMER.value, RoleEnum.ADMIN.value)
 def external_transfer():
     """
     POST /transfers/external

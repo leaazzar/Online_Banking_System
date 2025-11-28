@@ -32,6 +32,9 @@
       <a href="support_tickets.html" class="secondary-btn">Support Tickets</a>
       <a href="transactions.html" class="secondary-btn">Transactions</a>
       <a href="audit_logs.html" class="secondary-btn">Audit Logs</a>
+      <a href="transfers.html" class="secondary-btn">Transfers</a>
+      <a href="admin_transactions.html" class="secondary-btn">View All Transactions</a>
+      <a href="accounts.html" class="secondary-btn">Account</a>
     </div>
 
   </div>
@@ -41,12 +44,14 @@
 <script>
 document.addEventListener("DOMContentLoaded", loadStats);
 
-async function loadStats(){
+async function loadStats() {
   const box = document.getElementById("stats-container");
   box.innerHTML = "<p>Loading...</p>";
 
   try {
-    const data = await apiGet("/admin/overview");
+    // ⬅️ STAFF API (port 5003 + /staff), not customer API
+    const data = await staffApiGet("/admin/overview");
+
     box.innerHTML = `
       <div class="stat-card">Total Users: <strong>${data.total_users}</strong></div>
       <div class="stat-card">Customers: <strong>${data.total_customers}</strong></div>
@@ -57,8 +62,8 @@ async function loadStats(){
       <div class="stat-card">Closed: <strong>${data.closed_accounts}</strong></div>
       <div class="stat-card">Open Tickets: <strong>${data.open_tickets}</strong></div>
     `;
-  }
-  catch {
+  } catch (err) {
+    console.error("Failed to load overview:", err);
     box.innerHTML = "<p>Error loading stats.</p>";
   }
 }

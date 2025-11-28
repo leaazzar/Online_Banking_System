@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Manage Accounts</title>
+  <meta charset="UTF-8" />
+  <title>All Transactions</title>
 
-  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/global.css" />
   <script src="js/api.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/navbar.js"></script>
@@ -13,34 +13,33 @@
 <body>
 <div class="layout">
 
-  <!-- SIDEBAR -->
   <div id="sidebar-container"></div>
 
-  <!-- MAIN CONTENT -->
   <div class="main-content">
     <div id="navbar-container"></div>
 
-    <h1>Manage Accounts</h1>
-    <p class="page-subtitle">View and control all customer accounts.</p>
+    <h1>All Transactions</h1>
+    <p class="page-subtitle">System-wide transaction history (admin/support).</p>
 
     <div class="card">
       <table class="modern-table full-width">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Number</th>
-            <th>Balance</th>
-            <th>Status</th>
-            <th style="width: 260px;">Actions</th>
+            <th>Amount</th>
+            <th>Type</th>
+            <th>Sender</th>
+            <th>Receiver</th>
+            <th>Timestamp</th>
           </tr>
         </thead>
-        <tbody id="accounts-body"></tbody>
+        <tbody id="tx-body"></tbody>
       </table>
     </div>
   </div>
 
 </div>
 
-<script src="js/manage_accounts.js"></script>
+<script src="js/admin_transactions.js"></script>
 </body>
 </html>
