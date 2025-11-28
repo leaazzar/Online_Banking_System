@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
     menu = `
       <a href="admin_dashboard.html" class="sidebar-link">Dashboard</a>
       <a href="manage_users.html" class="sidebar-link">Manage Users</a>
-      <a href="manage_roles.html" class="sidebar-link">Roles</a>
       <a href="audit_logs.html" class="sidebar-link">Audit Logs</a>
       <a href="support_tickets.html" class="sidebar-link">Support Tickets</a>
     `;

@@ -4,22 +4,19 @@
     <meta charset="UTF-8">
     <title>Support Tickets</title>
 
-    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="css/global.css">
     <script src="js/api.js"></script>
     <script src="js/nav.js"></script>
     <script src="js/sidebar.js"></script>
 </head>
 
 <body>
-
 <div class="layout">
-
     <!-- SIDEBAR -->
     <div id="sidebar-container"></div>
 
     <!-- MAIN -->
     <div class="main-content">
-        
         <!-- NAV -->
         <div id="navbar-container"></div>
 
@@ -53,7 +50,7 @@
 
                 <h3>Add Note</h3>
                 <textarea id="new-note" class="input"></textarea>
-                <button class="btn-primary" onclick="addNote()">Add Note</button>
+                <button class="primary-btn" onclick="addNote()">Add Note</button>
 
                 <h3>Change Status</h3>
                 <select id="ticket-status" class="input">
@@ -61,16 +58,14 @@
                     <option value="in_progress">In Progress</option>
                     <option value="resolved">Resolved</option>
                 </select>
-                <button class="btn-secondary" onclick="changeStatus()">Save</button>
+                <button class="secondary-btn" onclick="changeStatus()">Save</button>
 
-                <button class="btn-danger" onclick="closeTicketModal()">Close</button>
+                <button class="secondary-btn" onclick="closeTicketModal()">Close</button>
             </div>
         </div>
-
     </div>
 </div>
 
 <script src="js/support_tickets.js"></script>
-
 </body>
 </html>

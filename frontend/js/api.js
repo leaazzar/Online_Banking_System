@@ -1,5 +1,3 @@
-
-
 // AUTH SERVICE
 const AUTH_BASE_URL = "http://localhost:5000/auth";
 
@@ -36,7 +34,7 @@ async function apiFetch(base, path, method, body = null, token = null) {
 }
 
 // =========================
-// AUTH HELPERS
+// AUTH HELPERS (NO AUTO REFRESH)
 // =========================
 
 const authPost = (path, body, token = null) =>
@@ -44,29 +42,6 @@ const authPost = (path, body, token = null) =>
 
 const authPatch = (path, body, token = null) =>
   apiFetch(AUTH_BASE_URL, path, "PATCH", body, token);
-
-// =========================
-// CUSTOMER HELPERS (raw)
-// =========================
-
-const customerGet = (path, token = null) =>
-  apiFetch(CUSTOMER_BASE_URL, path, "GET", null, token);
-
-const customerPost = (path, body, token = null) =>
-  apiFetch(CUSTOMER_BASE_URL, path, "POST", body, token);
-
-// =========================
-// STAFF HELPERS
-// =========================
-
-const staffGet = (path, token = null) =>
-  apiFetch(STAFF_BASE_URL, path, "GET", null, token);
-
-const staffPatch = (path, body, token = null) =>
-  apiFetch(STAFF_BASE_URL, path, "PATCH", body, token);
-
-const staffPost = (path, body, token = null) =>
-  apiFetch(STAFF_BASE_URL, path, "POST", body, token);
 
 // =========================
 // AUTH STORAGE
@@ -80,6 +55,10 @@ function setAuthData({ access_token, refresh_token, user }) {
 
 function getAccessToken() {
   return localStorage.getItem("access_token");
+}
+
+function getRefreshToken() {
+  return localStorage.getItem("refresh_token");
 }
 
 function getCurrentUser() {
@@ -100,13 +79,92 @@ function clearAuth() {
 }
 
 // =========================
+// REFRESH TOKEN LOGIC
+// =========================
+
+async function tryRefreshToken() {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return false;
+
+  try {
+    const { status, data } = await apiFetch(
+      AUTH_BASE_URL,
+      "/refresh",
+      "POST",
+      null,
+      refreshToken
+    );
+
+    if (status !== 200 || !data.access_token) {
+      return false;
+    }
+
+    localStorage.setItem("access_token", data.access_token);
+    return true;
+  } catch (err) {
+    console.error("Refresh token request failed:", err);
+    return false;
+  }
+}
+
+// Generic authenticated fetch with auto-refresh (for customer/staff services)
+async function authApiFetch(base, path, method, body = null) {
+  let token = getAccessToken();
+
+  // First attempt
+  let { status, data } = await apiFetch(base, path, method, body, token);
+
+  if (status !== 401) {
+    return { status, data };
+  }
+
+  // If 401 → try to refresh
+  const refreshed = await tryRefreshToken();
+  if (!refreshed) {
+    // Refresh failed → log out and redirect to login
+    clearAuth();
+    if (typeof window !== "undefined") {
+      window.location.href = "login.html";
+    }
+    throw new Error("Session expired, please log in again.");
+  }
+
+  // Retry once with new access token
+  token = getAccessToken();
+  const retryResult = await apiFetch(base, path, method, body, token);
+  return retryResult;
+}
+
+// =========================
+// CUSTOMER HELPERS (AUTO REFRESH)
+// =========================
+
+const customerGet = (path) =>
+  authApiFetch(CUSTOMER_BASE_URL, path, "GET", null);
+
+const customerPost = (path, body) =>
+  authApiFetch(CUSTOMER_BASE_URL, path, "POST", body);
+
+// =========================
+// STAFF HELPERS (AUTO REFRESH)
+// =========================
+
+const staffGet = (path) =>
+  authApiFetch(STAFF_BASE_URL, path, "GET", null);
+
+const staffPatch = (path, body) =>
+  authApiFetch(STAFF_BASE_URL, path, "PATCH", body);
+
+const staffPost = (path, body) =>
+  authApiFetch(STAFF_BASE_URL, path, "POST", body);
+
+// =========================
 // CONVENIENCE HELPERS FOR CUSTOMER API
 // (used by accounts.html, etc.)
 // =========================
 
 async function apiGet(path) {
-  const token = getAccessToken();
-  const { status, data } = await customerGet(path, token);
+  const { status, data } = await customerGet(path);
 
   if (status < 200 || status >= 300) {
     throw new Error(`GET ${path} failed: ${status} ${JSON.stringify(data)}`);
@@ -116,8 +174,7 @@ async function apiGet(path) {
 }
 
 async function apiPost(path, body) {
-  const token = getAccessToken();
-  const { status, data } = await customerPost(path, body, token);
+  const { status, data } = await customerPost(path, body);
 
   if (status < 200 || status >= 300) {
     throw new Error(`POST ${path} failed: ${status} ${JSON.stringify(data)}`);

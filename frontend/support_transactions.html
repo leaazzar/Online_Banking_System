@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>All Transactions (Support)</title>
+
+  <link rel="stylesheet" href="css/global.css" />
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/support_transactions.js" defer></script>
+</head>
+
+<body>
+  <div class="layout">
+    <!-- optional sidebar -->
+
+    <div class="main-content">
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
+        <div>
+          <h1>All Transactions</h1>
+          <p class="subtitle">
+            Review all transactions in the system for investigation or support.
+          </p>
+          <div class="quick-actions" style="margin-top:10px;">
+            <a href="support_dashboard.html" class="secondary-btn">← Back to Support Dashboard</a>
+          </div>
+        </div>
+
+        <div style="text-align:right;">
+          <div style="font-size:14px; margin-bottom:6px;">
+            Logged in as<br />
+            <strong id="support-user-name"></strong>
+          </div>
+          <button class="secondary-btn" onclick="handleLogout()">Logout</button>
+        </div>
+      </div>
+
+      <p id="tx-error" class="error-msg"></p>
+
+      <section class="card" style="margin-top:16px;">
+        <h2>All Transactions</h2>
+        <p class="subtitle">Support can view complete transfer history across all accounts.</p>
+
+        <table class="modern-table full-width" id="tx-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>From → To</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- filled by JS -->
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
