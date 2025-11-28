@@ -63,13 +63,9 @@ def admin_transactions():
 # ADMIN → USER MANAGEMENT (STAFF ONLY)
 # =====================================================
 
-admin_users_bp = Blueprint("admin_users_bp", __name__)
-
-
-# ------------------------------
 # LIST ALL USERS
 # ------------------------------
-@admin_users_bp.get("/admin/users")
+@admin_bp.get("/admin/users")
 @jwt_required()
 @require_roles(RoleEnum.ADMIN.value)
 def list_users():
@@ -95,7 +91,7 @@ def list_users():
 # ------------------------------
 # CREATE STAFF USER
 # ------------------------------
-@admin_users_bp.post("/admin/users/create-staff")
+@admin_bp.post("/admin/users/create-staff")
 @jwt_required()
 @require_roles(RoleEnum.ADMIN.value)
 def create_staff():
@@ -108,7 +104,7 @@ def create_staff():
             return jsonify({"msg": "Missing required fields"}), 400
 
         # Only staff roles allowed
-        if data["role"] not in ["support", "auditor", "admin"]:
+        if data["role"] not in ["support", "auditor"]:
             return jsonify({"msg": "Role must be support, auditor, or admin"}), 400
 
         # Email must be unique
@@ -147,7 +143,7 @@ def create_staff():
 # ------------------------------
 # UPDATE USER (NAME / PHONE / EMAIL)
 # ------------------------------
-@admin_users_bp.patch("/admin/users/<int:user_id>")
+@admin_bp.patch("/admin/users/<int:user_id>")
 @jwt_required()
 @require_roles(RoleEnum.ADMIN.value)
 def update_user(user_id):
@@ -174,7 +170,7 @@ def update_user(user_id):
 # ------------------------------
 # CHANGE STAFF ROLE
 # ------------------------------
-@admin_users_bp.patch("/admin/users/<int:user_id>/role")
+@admin_bp.patch("/admin/users/<int:user_id>/role")
 @jwt_required()
 @require_roles(RoleEnum.ADMIN.value)
 def change_role(user_id):
@@ -200,7 +196,7 @@ def change_role(user_id):
 # ------------------------------
 # DELETE STAFF USER
 # ------------------------------
-@admin_users_bp.delete("/admin/users/<int:user_id>")
+@admin_bp.delete("/admin/users/<int:user_id>")
 @jwt_required()
 @require_roles(RoleEnum.ADMIN.value)
 def delete_user(user_id):

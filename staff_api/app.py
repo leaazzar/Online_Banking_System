@@ -3,6 +3,7 @@ import sys
 import datetime as dt
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
@@ -13,7 +14,6 @@ from staff_api.routes.admin import admin_bp
 from staff_api.routes.auditor import auditor_bp
 from staff_api.routes.accounts import accounts_bp
 from staff_api.routes.logs import logs_bp
-from staff_api.admin_users import admin_users_bp
 
 try:
     from dotenv import load_dotenv
@@ -23,7 +23,7 @@ except ImportError:
 
 def create_app():
     app = Flask(__name__)
-
+    CORS(app, supports_credentials=True)
     jwt_secret = os.getenv("JWT_SECRET_KEY")
     if not jwt_secret:
         raise RuntimeError(
@@ -36,8 +36,6 @@ def create_app():
     app.config["JWT_TOKEN_LOCATION"] = ["headers"]
     app.config["JWT_HEADER_NAME"] = "Authorization"
     app.config["JWT_HEADER_TYPE"] = "Bearer"
-    app.register_blueprint(admin_users_bp)
-
     jwt = JWTManager(app)
 
     @jwt.unauthorized_loader

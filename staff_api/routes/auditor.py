@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
 
 from common.database import SessionLocal
-from common.models import Account, Transaction, RoleEnum
+from common.models import Account, Transaction, RoleEnum, AuditLog
 from staff_api.utils.permissions import require_roles
 
 

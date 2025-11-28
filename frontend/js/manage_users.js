@@ -3,7 +3,9 @@ let editingUserId = null;
 document.addEventListener("DOMContentLoaded", loadUsers);
 
 async function loadUsers() {
-    const users = await apiGet("/admin/users");
+    const res = await staffApiGet("/admin/users", getAccessToken());
+    const users = res.data;
+
     const tbody = document.getElementById("users-body");
     tbody.innerHTML = "";
 
@@ -14,16 +16,17 @@ async function loadUsers() {
             <td>${u.full_name}</td>
             <td>${u.email}</td>
             <td>${u.phone}</td>
-            <td>${u.role}</td>
+            <td><span class="role-pill role-${u.role}">${u.role}</span></td>
             <td>
-                <button class="action-btn small-btn" onclick="openEditModal(${u.id}, '${u.full_name}', '${u.email}', '${u.phone}')">Edit</button>
-                <button class="action-btn small-btn" onclick="changeRole(${u.id})">Role</button>
-                <button class="action-btn danger-btn small-btn" onclick="deleteUser(${u.id})">Delete</button>
+                <button class="btn edit" onclick="openEditModal(${u.id}, '${u.full_name}', '${u.email}', '${u.phone}')">Edit</button>
+                <button class="btn danger" onclick="deleteUser(${u.id})">Delete</button>
             </td>
         `;
+
         tbody.appendChild(row);
     });
 }
+
 
 // ------------------- CREATE USER -------------------
 function openCreateModal() {
@@ -41,10 +44,19 @@ async function createStaff() {
         role: document.getElementById("create-role").value
     };
 
-    await apiPost("/admin/users/create-staff", body);
+    await staffApiPost("/admin/users/create-staff", body);
+
+    // RESET FIELDS
+    document.getElementById("create-name").value = "";
+    document.getElementById("create-email").value = "";
+    document.getElementById("create-phone").value = "";
+    document.getElementById("create-password").value = "";
+    document.getElementById("create-role").value = "support";
+
     closeCreateModal();
     loadUsers();
 }
+
 
 // ------------------- EDIT USER -------------------
 function openEditModal(id, name, email, phone) {
@@ -59,28 +71,20 @@ function closeEditModal() {
     document.getElementById("edit-modal").classList.add("hidden");
 }
 async function saveUserEdit() {
-    await apiPatch(`/admin/users/${editingUserId}`, {
+    await staffApiPatch(`/admin/users/${editingUserId}`, {
         full_name: document.getElementById("edit-name").value,
         email: document.getElementById("edit-email").value,
         phone: document.getElementById("edit-phone").value
-    });
+    }, getAccessToken());
 
     closeEditModal();
     loadUsers();
 }
 
-// ------------------- CHANGE ROLE -------------------
-async function changeRole(id) {
-    const newRole = prompt("Enter new role: support / auditor / admin");
-    if (!newRole) return;
-
-    await apiPatch(`/admin/users/${id}/role`, { role: newRole });
-    loadUsers();
-}
-
 // ------------------- DELETE USER -------------------
 async function deleteUser(id) {
-    if (!confirm("Delete this staff member?")) return;
-    await apiDelete(`/admin/users/${id}`);
+    if (!confirm("Are you sure you want to delete this staff member?")) return;
+
+    await staffApiDelete(`/admin/users/${id}`, getAccessToken());
     loadUsers();
 }

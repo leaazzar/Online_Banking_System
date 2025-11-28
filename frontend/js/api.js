@@ -125,3 +125,61 @@ async function apiPost(path, body) {
 
   return data;
 }
+async function staffApiGet(path) {
+  const token = getAccessToken();
+  const { status, data } = await staffGet(path, token);
+
+  if (status < 200 || status >= 300) {
+    throw new Error(`STAFF GET ${path} failed: ${status} ${JSON.stringify(data)}`);
+  }
+  return data;
+}
+
+async function staffApiPost(path, body) {
+  const token = getAccessToken();
+  const { status, data } = await staffPost(path, body, token);
+
+  if (status < 200 || status >= 300) {
+    throw new Error(`STAFF POST ${path} failed: ${status} ${JSON.stringify(data)}`);
+  }
+  return data;
+}
+
+async function staffApiPatch(path, body) {
+  const token = getAccessToken();
+  const { status, data } = await staffPatch(path, body, token);
+
+  if (status < 200 || status >= 300) {
+    throw new Error(`STAFF PATCH ${path} failed: ${status} ${JSON.stringify(data)}`);
+  }
+  return data;
+}
+async function staffApiDelete(path) {
+  const token = getAccessToken();
+
+  const { status, data } = await apiFetch(STAFF_BASE_URL, path, "DELETE", null, token);
+
+  if (status < 200 || status >= 300) {
+    throw new Error(`STAFF DELETE ${path} failed: ${status} ${JSON.stringify(data)}`);
+  }
+
+  return data;
+}
+function setStaffAuthData({ access_token, user }) {
+  if (access_token) localStorage.setItem("staff_access_token", access_token);
+  if (user) localStorage.setItem("staff_user", JSON.stringify(user));
+}
+
+function getStaffToken() {
+  return localStorage.getItem("staff_access_token");
+}
+
+function getStaffUser() {
+  const raw = localStorage.getItem("staff_user");
+  return raw ? JSON.parse(raw) : null;
+}
+
+function clearStaffAuth() {
+  localStorage.removeItem("staff_access_token");
+  localStorage.removeItem("staff_user");
+}
