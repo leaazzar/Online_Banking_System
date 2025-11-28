@@ -1,40 +1,48 @@
-document.addEventListener("DOMContentLoaded", loadAuditLogs);
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Audit logs page loaded.");
+  loadAuditLogs().catch(err => console.error("Error loading logs:", err));
+});
 
 async function loadAuditLogs() {
-    const table = document.getElementById("logs-table");
-    table.innerHTML = `<tr><td colspan="5">Loading...</td></tr>`;
+  const table = document.getElementById("logs-table");
+  table.innerHTML = `<tr><td colspan="5">Loading...</td></tr>`;
 
-    try {
-        const logs = await apiGet("/auditor/audit-logs");
+  try {
+    console.log("Calling staffApiGet for /auditor/audit-logs");
 
-        if (!logs.length) {
-            table.innerHTML = `<tr><td colspan="5">No logs found.</td></tr>`;
-            return;
-        }
+    // ✅ USE STAFF API, NOT apiGet
+    const logs = await staffApiGet("/auditor/audit-logs");
 
-        table.innerHTML = "";
+    console.log("Logs response:", logs);
 
-        logs.forEach(log => {
-            const row = document.createElement("tr");
-
-            row.innerHTML = `
-                <td>${log.id}</td>
-                <td>${log.user_name || "Unknown"}</td>
-                <td>${log.action}</td>
-                <td>${log.details || "-"}</td>
-                <td>${formatDate(log.created_at)}</td>
-            `;
-
-            table.appendChild(row);
-        });
-
-    } catch (err) {
-        console.error(err);
-        table.innerHTML = `<tr><td colspan="5">Error loading logs.</td></tr>`;
+    if (!Array.isArray(logs) || logs.length === 0) {
+      table.innerHTML = `<tr><td colspan="5">No logs found.</td></tr>`;
+      return;
     }
+
+    table.innerHTML = "";
+
+    logs.forEach(log => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${log.id}</td>
+        <td>${log.user_name || "Unknown"}</td>
+        <td>${log.action}</td>
+        <td>${log.details || "-"}</td>
+        <td>${formatDate(log.created_at)}</td>
+      `;
+
+      table.appendChild(row);
+    });
+
+  } catch (err) {
+    console.error("Audit log load error:", err);
+    table.innerHTML = `<tr><td colspan="5">Error loading logs.</td></tr>`;
+  }
 }
 
 function formatDate(str) {
-    const d = new Date(str);
-    return d.toLocaleString();
+  const d = new Date(str);
+  return d.toLocaleString();
 }

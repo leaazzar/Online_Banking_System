@@ -144,7 +144,6 @@ const customerGet = (path) =>
 
 const customerPost = (path, body) =>
   authApiFetch(CUSTOMER_BASE_URL, path, "POST", body);
-
 // =========================
 // STAFF HELPERS (AUTO REFRESH)
 // =========================
@@ -152,11 +151,58 @@ const customerPost = (path, body) =>
 const staffGet = (path) =>
   authApiFetch(STAFF_BASE_URL, path, "GET", null);
 
+const staffPost = (path, body) =>
+  authApiFetch(STAFF_BASE_URL, path, "POST", body);
+
 const staffPatch = (path, body) =>
   authApiFetch(STAFF_BASE_URL, path, "PATCH", body);
 
-const staffPost = (path, body) =>
-  authApiFetch(STAFF_BASE_URL, path, "POST", body);
+// High-level helpers that throw on non-2xx
+
+async function staffApiGet(path) {
+  const { status, data } = await staffGet(path);
+
+  if (status < 200 || status >= 300) {
+    throw new Error(`STAFF GET ${path} failed: ${status} ${JSON.stringify(data)}`);
+  }
+  return data;
+}
+
+async function staffApiPost(path, body) {
+  const { status, data } = await staffPost(path, body);
+
+  if (status < 200 || status >= 300) {
+    throw new Error(`STAFF POST ${path} failed: ${status} ${JSON.stringify(data)}`);
+  }
+  return data;
+}
+
+async function staffApiPatch(path, body) {
+  const { status, data } = await staffPatch(path, body);
+
+  if (status < 200 || status >= 300) {
+    throw new Error(`STAFF PATCH ${path} failed: ${status} ${JSON.stringify(data)}`);
+  }
+  return data;
+}
+
+async function staffApiDelete(path) {
+  const token = getAccessToken();
+  const { status, data } = await apiFetch(
+    STAFF_BASE_URL,
+    path,
+    "DELETE",
+    null,
+    token
+  );
+
+  if (status < 200 || status >= 300) {
+    throw new Error(`STAFF DELETE ${path} failed: ${status} ${JSON.stringify(data)}`);
+  }
+
+  return data;
+}
+;
 
 // =========================
 // CONVENIENCE HELPERS FOR CUSTOMER API

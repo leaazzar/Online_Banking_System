@@ -1,160 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Manage Users</title>
-    <link rel="stylesheet" href="/frontend/css/global.css">
-<link rel="stylesheet" href="/frontend/css/modal.css">
+  <meta charset="UTF-8" />
+  <title>Manage Users</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<script src="/frontend/js/api.js"></script>
-<script src="/frontend/js/sidebar.js"></script>
-<script src="/frontend/js/nav.js"></script>
-<script src="/frontend/js/manage_users.js" defer></script>
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/modal.css">
 
-    <style>
-        .styled-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-top: 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
+  <style>
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
 
-        .styled-table th {
-            background: #f4f5f7;
-            padding: 14px;
-            font-weight: 600;
-            color: #333;
-            font-size: 15px;
-        }
+    .styled-table th {
+      background: #f4f5f7;
+      padding: 14px;
+      font-weight: 600;
+      color: #333;
+      font-size: 15px;
+      text-align: left;
+    }
 
-        .styled-table td {
-            padding: 14px;
-            border-top: 1px solid #eee;
-            font-size: 14px;
-        }
+    .styled-table td {
+      padding: 14px;
+      border-top: 1px solid #eee;
+      font-size: 14px;
+    }
 
-        .btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .btn.edit { background: #3498db; color: white; }
-        .btn.danger { background: #e74c3c; color: white; }
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
 
-        .role-pill {
-            padding: 5px 12px;
-            border-radius: 14px;
-            font-size: 12px;
-            color: white;
-            text-transform: capitalize;
-        }
-        .role-admin { background: #8e44ad; }
-        .role-support { background: #2ecc71; }
-        .role-auditor { background: #f1c40f; color: black; }
+    .btn.edit {
+      background: #3498db;
+      color: #fff;
+    }
 
-        .page-header h1 {
-            margin-bottom: 5px;
-        }
+    .btn.danger {
+      background: #e74c3c;
+      color: #fff;
+    }
 
-        .create-btn {
-            margin: 10px 0 20px 0;
-        }
-    </style>
+    .role-pill {
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      color: #fff;
+      text-transform: capitalize;
+      display: inline-block;
+    }
+
+    .role-admin {
+      background: #8e44ad;
+    }
+
+    .role-support {
+      background: #2ecc71;
+    }
+
+    .role-auditor {
+      background: #f1c40f;
+      color: #000;
+    }
+
+    .page-header h1 {
+      margin-bottom: 5px;
+    }
+
+    .create-btn {
+      margin: 10px 0 20px 0;
+    }
+  </style>
 </head>
 
 <body>
-<div class="layout">
-
+  <div class="layout">
     <!-- SIDEBAR -->
     <div id="sidebar-container"></div>
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
-        <div id="navbar-container"></div>
+      <div id="navbar-container"></div>
 
-        <div class="page-header">
-            <h1>Manage Users</h1>
-        </div>
+      <div class="page-header">
+        <h1>Manage Users</h1>
+      </div>
 
-        <button onclick="openCreateModal()" class="primary-btn create-btn">
-            + Create New Staff
-        </button>
+      <button class="primary-btn create-btn" onclick="openCreateModal()">
+        + Create New Staff
+      </button>
 
-        <table class="styled-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Role</th>
-                    <th style="width: 150px;">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="users-body">
-                <!-- Filled by JS -->
-            </tbody>
-        </table>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th style="width: 150px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-body">
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<!-- CREATE USER MODAL -->
-<div id="create-modal" class="modal hidden">
+  <!-- CREATE USER MODAL -->
+  <div id="create-modal" class="modal hidden">
     <div class="modal-content">
-        <h2>Create Staff User</h2>
+      <h2>Create Staff User</h2>
 
-        <label>Full Name</label>
-        <input id="create-name">
+      <label for="create-name">Full Name</label>
+      <input id="create-name" type="text" />
 
-        <label>Email</label>
-        <input id="create-email">
+      <label for="create-email">Email</label>
+      <input id="create-email" type="email" />
 
-        <label>Phone</label>
-        <input id="create-phone">
+      <label for="create-phone">Phone</label>
+      <input id="create-phone" type="text" />
 
-        <label>Password</label>
-        <input id="create-password" type="password">
+      <label for="create-password">Password</label>
+      <input id="create-password" type="password" />
 
-        <label>Role</label>
-        <select id="create-role">
-            <option value="support">Support</option>
-            <option value="auditor">Auditor</option>
-            <option value="admin">Admin</option>
-        </select>
+      <label for="create-role">Role</label>
+      <select id="create-role">
+        <option value="support">Support</option>
+        <option value="auditor">Auditor</option>
+        <option value="admin">Admin</option>
+      </select>
 
-        <div class="modal-actions">
-            <button class="secondary-btn" onclick="closeCreateModal()">Cancel</button>
-            <button class="primary-btn" onclick="createStaff()">Create</button>
-        </div>
+      <div class="modal-actions">
+        <button class="secondary-btn" onclick="closeCreateModal()">Cancel</button>
+        <button class="primary-btn" onclick="createStaff()">Create</button>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- EDIT MODAL -->
-<div id="edit-modal" class="modal hidden">
+  <!-- EDIT USER MODAL -->
+  <div id="edit-modal" class="modal hidden">
     <div class="modal-content">
-        <h2>Edit User</h2>
+      <h2>Edit User</h2>
 
-        <label>Full Name</label>
-        <input id="edit-name">
+      <label for="edit-name">Full Name</label>
+      <input id="edit-name" type="text" />
 
-        <label>Email</label>
-        <input id="edit-email">
+      <label for="edit-email">Email</label>
+      <input id="edit-email" type="email" />
 
-        <label>Phone</label>
-        <input id="edit-phone">
+      <label for="edit-phone">Phone</label>
+      <input id="edit-phone" type="text" />
 
-        <div class="modal-actions">
-            <button class="secondary-btn" onclick="closeEditModal()">Cancel</button>
-            <button class="primary-btn" onclick="saveUserEdit()">Save</button>
-        </div>
+      <div class="modal-actions">
+        <button class="secondary-btn" onclick="closeEditModal()">Cancel</button>
+        <button class="primary-btn" onclick="saveUserEdit()">Save</button>
+      </div>
     </div>
-</div>
+  </div>
 
-<script src="js/manage_users.js"></script>
-
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/manage_users.js"></script>
 </body>
 </html>

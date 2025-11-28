@@ -121,13 +121,9 @@ document.addEventListener("DOMContentLoaded", () => {
     firstLoginForm.addEventListener("submit", handleFirstLogin);
   }
 });
-// =========================
-// LOGOUT HELPER
-// =========================
-function handleLogout() {
-  console.log("handleLogout called"); // 🔍 debug
 
-  // Safety: if clearAuth is defined, call it
+function handleLogout() {
+  console.log("handleLogout called"); 
   if (typeof clearAuth === "function") {
     clearAuth();
   } else {
