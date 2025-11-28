@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Auditor - Accounts</title>
+
+    <link rel="stylesheet" href="/css/global.css" />
+    <script src="js/api.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/navbar.js"></script>
+</head>
+
+<body>
+<div class="layout">
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div id="navbar-container"></div>
+        <h1>All Accounts (Auditor View)</h1>
+
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Account Number</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="accounts-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="js/auditor_accounts.js"></script>
+</body>
+</html>

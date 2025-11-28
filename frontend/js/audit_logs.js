@@ -1,3 +1,12 @@
+// ============================
+// ROLE PROTECTION (runs immediately)
+// ============================
+const user = getCurrentUser();
+if (!user || (user.role !== "admin" && user.role !== "auditor")) {
+  alert("Unauthorized access.");
+  window.location.href = "login.html";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Audit logs page loaded.");
   loadAuditLogs().catch(err => console.error("Error loading logs:", err));
