@@ -1,36 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Support Dashboard</title>
-  <link rel="stylesheet" href="css/global.css">
-  <script src="js/nav.js"></script>
+
+  <link rel="stylesheet" href="css/global.css" />
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/support.js" defer></script>
 </head>
 
 <body>
-  <!-- TOP NAVBAR -->
-  <div class="navbar">
-      <div class="nav-left">Support Center</div>
+  <div class="layout">
+    <!-- If you have a sidebar, it can go here -->
 
-      <div class="nav-right">
-          <span class="nav-user" id="nav-username">Loading...</span>
-          <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="main-content">
+      <!-- Page header -->
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
+        <div>
+          <h1>Support Dashboard</h1>
+          <p class="subtitle">
+            View customer tickets, update their status, and keep notes for follow-up.
+          </p>
+
+          <!-- Quick actions -->
+          <div class="quick-actions" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="support_accounts.html" class="secondary-btn">View All Accounts</a>
+            <a href="support_transactions.html" class="secondary-btn">View All Transactions</a>
+          </div>
+        </div>
+
+        <div style="text-align:right;">
+          <div style="font-size:14px; margin-bottom:6px;">
+            Logged in as<br />
+            <strong id="support-user-name"></strong>
+          </div>
+          <button class="secondary-btn" onclick="handleLogout()">Logout</button>
+        </div>
       </div>
-  </div>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-      <a href="support_dashboard.html">Dashboard</a>
-      <a href="#">View Tickets</a>
-      <a href="#">Assigned Cases</a>
-      <a href="#">Profile</a>
-  </div>
+      <!-- Tickets list -->
+      <section class="card" style="margin-top:20px;">
+        <h2>All Tickets</h2>
+        <p class="subtitle">Browse all tickets that require your attention.</p>
 
-  <!-- MAIN CONTENT -->
-  <div class="main-content">
-      <h1>Support Desk</h1>
-      <p>View and resolve customer tickets.</p>
-  </div>
+        <p id="tickets-error" class="error-msg"></p>
 
+        <div style="margin-top:15px;">
+          <table class="modern-table" id="tickets-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Subject</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- filled by JS in js/support.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Ticket details + notes -->
+      <section class="card" id="ticket-details-card" style="margin-top:20px; display:none;">
+        <h2>Ticket Details</h2>
+        <p class="subtitle">Full description and internal notes for this ticket.</p>
+
+        <div id="ticket-details" class="notes-box" style="margin-top:10px;"></div>
+
+        <h3 style="margin-top:18px; margin-bottom:8px;">Notes</h3>
+        <div class="notes-box">
+          <ul id="ticket-notes-list" style="list-style:none;"></ul>
+        </div>
+
+        <form id="add-note-form" class="note-form" style="margin-top:12px;">
+          <label for="note-text" class="note-label" style="display:block; margin-bottom:6px;">
+            Add a note for this ticket
+          </label>
+          <textarea
+            id="note-text"
+            rows="3"
+            placeholder="Write an update or a summary of your communication with the customer..."
+            required
+            style="width:100%; padding:8px; border-radius:8px; border:1px solid #ddd; margin-bottom:10px;"
+          ></textarea>
+          <button class="primary-btn" type="submit">Add Note</button>
+        </form>
+
+        <p id="note-error" class="error-msg"></p>
+        <p id="note-success" class="empty-msg"></p>
+      </section>
+    </div>
+  </div>
 </body>
 </html>

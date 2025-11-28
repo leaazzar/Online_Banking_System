@@ -1,6 +1,4 @@
-// =========================
-// LOGIN
-// =========================
+
 async function handleLogin(event) {
   event.preventDefault();
 

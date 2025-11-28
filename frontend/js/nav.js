@@ -38,11 +38,29 @@ document.addEventListener("DOMContentLoaded", () => {
   injectNavbarCSS();
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const userNameSpan = document.getElementById("user-name");
+  if (!userNameSpan) return;
+
+  try {
+    const raw = localStorage.getItem("current_user");
+    const user = raw ? JSON.parse(raw) : null;
+
+    if (user && user.full_name) {
+      userNameSpan.textContent = user.full_name;
+    } else {
+      userNameSpan.textContent = "User";
+    }
+  } catch (err) {
+    console.error("Failed to load user:", err);
+    userNameSpan.textContent = "User";
+  }
+});
+
 function logout() {
   if (typeof clearAuth === "function") {
     clearAuth();
   } else {
-    // Fallback, in case clearAuth isn't loaded for some reason
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("current_user");

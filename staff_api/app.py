@@ -3,32 +3,43 @@ import sys
 import datetime as dt
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
+from dotenv import load_dotenv   # ✅ load .env support
 
+# ---------------------------------------------------
+# PATH SETUP
+# ---------------------------------------------------
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
 sys.path.append(PROJECT_ROOT)
 
+# Load .env from project root
+load_dotenv(os.path.join(PROJECT_ROOT, ".env"))   # ✅ REQUIRED
+
+
+# ---------------------------------------------------
+# IMPORT BLUEPRINTS
+# ---------------------------------------------------
 from staff_api.routes.tickets import tickets_bp
 from staff_api.routes.admin import admin_bp
 from staff_api.routes.auditor import auditor_bp
 from staff_api.routes.accounts import accounts_bp
 from staff_api.routes.logs import logs_bp
-from staff_api.admin_users import admin_users_bp
+# from staff_api.routes.admin_users import admin_users_bp   # enable if used
 
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass
 
+# ---------------------------------------------------
+# CREATE APP
+# ---------------------------------------------------
 def create_app():
     app = Flask(__name__)
 
+    # Load secret from env
     jwt_secret = os.getenv("JWT_SECRET_KEY")
+    print("Loaded JWT_SECRET_KEY:", jwt_secret)   # DEBUG
+
     if not jwt_secret:
-        raise RuntimeError(
-            "JWT_SECRET_KEY is not set. Put it in a .env file or environment variables."
-        )
+        raise RuntimeError("JWT_SECRET_KEY is not set. Put it in a .env file.")
 
     app.config["JWT_SECRET_KEY"] = jwt_secret
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = dt.timedelta(minutes=15)
@@ -36,8 +47,19 @@ def create_app():
     app.config["JWT_TOKEN_LOCATION"] = ["headers"]
     app.config["JWT_HEADER_NAME"] = "Authorization"
     app.config["JWT_HEADER_TYPE"] = "Bearer"
-    app.register_blueprint(admin_users_bp)
 
+    # ---------------------------------------------------
+    # CORS (Frontend → Backend communication)
+    # ---------------------------------------------------
+    CORS(
+        app,
+        resources={r"/staff/*": {"origins": "http://localhost:8080"}},
+        supports_credentials=True,
+    )
+
+    # ---------------------------------------------------
+    # JWT ERROR HANDLERS
+    # ---------------------------------------------------
     jwt = JWTManager(app)
 
     @jwt.unauthorized_loader
@@ -51,13 +73,22 @@ def create_app():
     @jwt.revoked_token_loader
     def revoked_token(jwt_header, jwt_payload):
         return jsonify({"msg": "Token has been revoked"}), 401
-    
+
+    # ---------------------------------------------------
+    # REGISTER BLUEPRINTS
+    # ---------------------------------------------------
+    # if you enable admin_users_bp, add url_prefix="/staff"
+    # app.register_blueprint(admin_users_bp, url_prefix="/staff")
+
     app.register_blueprint(tickets_bp, url_prefix="/staff")
     app.register_blueprint(admin_bp, url_prefix="/staff")
     app.register_blueprint(auditor_bp, url_prefix="/staff")
     app.register_blueprint(accounts_bp, url_prefix="/staff")
     app.register_blueprint(logs_bp, url_prefix="/staff")
 
+    # ---------------------------------------------------
+    # HEALTH CHECK ROUTE
+    # ---------------------------------------------------
     @app.route("/health")
     def health():
         return jsonify({"status": "ok", "service": "staff_api"}), 200
@@ -65,6 +96,9 @@ def create_app():
     return app
 
 
+# ---------------------------------------------------
+# RUN SERVER
+# ---------------------------------------------------
 if __name__ == "__main__":
     app = create_app()
     app.run(port=5003, debug=True)

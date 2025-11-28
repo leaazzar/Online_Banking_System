@@ -19,7 +19,7 @@ admin_bp = Blueprint("admin_bp", __name__)
 
 @admin_bp.get("/admin/accounts")
 @jwt_required()
-@require_roles(RoleEnum.ADMIN.value)
+@require_roles(RoleEnum.ADMIN.value, RoleEnum.SUPPORT.value)
 def admin_accounts():
     db = SessionLocal()
     try:
@@ -39,7 +39,7 @@ def admin_accounts():
 
 @admin_bp.get("/admin/transactions")
 @jwt_required()
-@require_roles(RoleEnum.ADMIN.value)
+@require_roles(RoleEnum.ADMIN.value,RoleEnum.SUPPORT.value )
 def admin_transactions():
     db = SessionLocal()
     try:
@@ -71,7 +71,7 @@ admin_users_bp = Blueprint("admin_users_bp", __name__)
 # ------------------------------
 @admin_users_bp.get("/admin/users")
 @jwt_required()
-@require_roles(RoleEnum.ADMIN.value)
+@require_roles(RoleEnum.ADMIN.value, RoleEnum.SUPPORT.value)
 def list_users():
     db = SessionLocal()
     try:
