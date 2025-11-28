@@ -38,10 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  if (role === "auditor") {
-    menu = `
-      <a href="audit_dashboard.html" class="sidebar-link">Audit Dashboard</a>
-      <a href="suspicious.html" class="sidebar-link">Suspicious Transactions</a>
+ if (role === "auditor") {
+    menu += `
+      <a href="auditor_accounts.html">Accounts</a>
+      <a href="auditor_transactions.html">Transactions</a>
+      <a href="audit_logs.html" class="sidebar-link">Audit Logs</a>
     `;
   }
 

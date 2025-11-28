@@ -1,3 +1,13 @@
+// ============================
+// ROLE PROTECTION (runs immediately)
+// ============================
+const user = getCurrentUser();
+if (!user || (user.role !== "admin")) {
+  alert("Unauthorized access.");
+  window.location.href = "login.html";
+}
+
+
 let editingUserId = null;
 
 // Load users when page is ready

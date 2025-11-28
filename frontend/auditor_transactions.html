@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Auditor - Transactions</title>
+
+    <link rel="stylesheet" href="/css/global.css" />
+    <script src="js/api.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/navbar.js"></script>
+</head>
+
+<body>
+<div class="layout">
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div id="navbar-container"></div>
+        <h1>All Transactions (Auditor View)</h1>
+
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody id="tx-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="js/auditor_transactions.js"></script>
+</body>
+</html>
